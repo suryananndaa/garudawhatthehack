@@ -1,0 +1,132 @@
+// Prisma schema buat dashboard supplier/petani (Tanaku).
+// Modelnya diturunin langsung dari komponen yang keliatan di UI:
+// - Beranda: stats (pesanan masuk, stok, pesanan diproses, pendapatan), performa toko, notifikasi
+// - Produk Saya: daftar produk + stok + harga + terjual
+// - Pesanan: status pesanan masuk/diproses/selesai
+// - Pengiriman & Keuangan: turunan dari status Order & OrderItem, gak perlu tabel terpisah
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ---------- Supplier (CV / petani yang jualan) ----------
+
+model Supplier {
+  id          String   @id @default(uuid())
+  name        String   // "CV. Matoa Papua Sentosa"
+  email       String   @unique
+  password    String   // hashed dengan bcrypt
+  role        String   @default("petani") // "petani" | "pembeli"
+  phone       String?
+  address     String?
+  rating      Float    @default(5.0) // "Performa Toko" -> 4,8 / 5
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products      Product[]
+  orders        Order[]
+  notifications Notification[]
+}
+
+// ---------- Produk ----------
+
+enum StorageMethod {
+  suhu_ruang
+  kulkas
+  vakum
+}
+
+enum FreshnessTier {
+  Fresh
+  Standard
+  Rescue
+}
+
+model Product {
+  id             String        @id @default(uuid())
+  supplierId     String
+  supplier       Supplier      @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  name           String        // "Matoa", "Alpukat Mentega", "Nanas Madu"
+  iconUrl        String?       // emoji/icon kecil di tabel produk
+  quantityKg     Float         // "Stok Tersedia"
+  pricePerKg     Float         // "Harga / kg"
+  harvestDate    DateTime      // dipakai buat hitung days_since_harvest ke model ML
+  storageMethod  StorageMethod
+  hygienic       Boolean       @default(true)
+
+  // hasil prediksi model ML tier kesegaran (dari fitur yang udah dibikin sebelumnya)
+  predictedTier      FreshnessTier?
+  tierProbabilities  Json?      // { "Fresh": 0.9, "Standard": 0.08, "Rescue": 0.02 }
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  orderItems     OrderItem[]
+
+  @@index([supplierId])
+}
+
+// ---------- Pesanan ----------
+
+enum OrderStatus {
+  masuk       // "Pesanan Masuk" - baru masuk, belum diproses
+  diproses    // "Pesanan Diproses" - sedang dikerjakan/dikirim
+  selesai     // pesanan udah kelar, masuk hitungan "Pendapatan Bulan Ini"
+  dibatalkan
+}
+
+model Order {
+  id           String      @id @default(uuid())
+  supplierId   String
+  supplier     Supplier    @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  buyerName    String      // nama UMKM/konsumen pemesan (belum ada tabel Buyer terpisah)
+  buyerContact String?
+
+  status       OrderStatus @default(masuk)
+  totalPrice   Float       // dihitung dari sum(orderItems.subtotal)
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  items        OrderItem[]
+
+  @@index([supplierId, status])
+}
+
+// 1 pesanan bisa berisi beberapa produk sekaligus
+model OrderItem {
+  id            String   @id @default(uuid())
+  orderId       String
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+
+  quantityKg    Float
+  pricePerKgAtOrder Float // snapshot harga saat order dibuat (harga produk bisa berubah nanti)
+  subtotal      Float
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+// ---------- Notifikasi ----------
+
+model Notification {
+  id         String   @id @default(uuid())
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  message    String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([supplierId, isRead])
+}
