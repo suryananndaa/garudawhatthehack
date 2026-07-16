@@ -11,6 +11,8 @@ import PesananPage from './pages/PesananPage.jsx'
 import PengirimanPage from './pages/PengirimanPage.jsx'
 import PengirimanDetailPage from './pages/PengirimanDetailPage.jsx'
 import PengaturanPage from './pages/PengaturanPage.jsx'
+import UMKMDashboard from './umkm/Dashboard.jsx'
+import PesananSaya from './umkm/Pesanan.jsx'
 import './index.css'
 
 function isLoggedIn() {
@@ -39,6 +41,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/" element={<Navigate to="/login" replace />} />
 
+        {/* ===== PETANI / SUPPLIER ===== */}
         <Route path="/petani" element={<PrivateRoute><App /></PrivateRoute>}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<BerandaPage />} />
@@ -50,6 +53,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="pengaturan" element={<PengaturanPage />} />
           <Route path="keuangan" element={<ComingSoon title="Keuangan" />} />
         </Route>
+
+        {/* ===== PEMBELI / UMKM ===== */}
+        <Route path="/pembeli/dashboard" element={<PrivateRoute><UMKMDashboard /></PrivateRoute>} />
+        <Route path="/pembeli/pesanan"   element={<PrivateRoute><PesananSaya /></PrivateRoute>} />
+        <Route path="/pembeli" element={<Navigate to="/pembeli/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
