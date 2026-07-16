@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Store, ShieldCheck, Bell, Wallet, Clock3 } from 'lucide-react'
 import PageIntro from '../components/layout/PageIntro.jsx'
 import SettingsNav from '../components/settings/SettingsNav.jsx'
@@ -13,6 +13,12 @@ import SelectInput from '../components/form/SelectInput.jsx'
 import FileDropzone from '../components/form/FileDropzone.jsx'
 import FormActions from '../components/form/FormActions.jsx'
 import './PengaturanPage.css'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+
+function getToken() {
+  return localStorage.getItem('token') || sessionStorage.getItem('token')
+}
 
 const NAV_ITEMS = [
   { key: 'profil', label: 'Profil Toko', icon: Store },
@@ -44,24 +50,29 @@ const SHIPPING_METHODS = [
 
 export default function PengaturanPage() {
   const [activeTab, setActiveTab] = useState('profil')
+  const [saveStatus, setSaveStatus] = useState('') // 'saving' | 'success' | 'error'
+
+  // Load user dari localStorage/sessionStorage
+  const storedUser = JSON.parse(
+    localStorage.getItem('user') || sessionStorage.getItem('user') || '{}'
+  )
 
   const [profil, setProfil] = useState({
-    namaToko: 'Taniku Farm',
-    kategori: 'buah',
-    lokasi: 'Jayapura, Papua',
-    deskripsi: 'Menjual hasil panen buah segar langsung dari kebun.',
+    namaToko: storedUser.name ?? '',
+    lokasi:   storedUser.city ?? '',
+    deskripsi: '',
   })
-  const [logo, setLogo] = useState(null)
 
   const [akun, setAkun] = useState({
-    namaPemilik: '',
-    email: '',
-    telepon: '',
-    passwordSaatIni: '',
-    passwordBaru: '',
+    namaPemilik:       storedUser.name ?? '',
+    email:             storedUser.email ?? '',
+    telepon:           storedUser.phone ?? '',
+    passwordSaatIni:   '',
+    passwordBaru:      '',
     konfirmasiPassword: '',
   })
 
+  const [logo, setLogo] = useState(null)
   const [notifikasi, setNotifikasi] = useState({
     pesananBaru: true,
     stokMenipis: true,
@@ -103,9 +114,55 @@ export default function PengaturanPage() {
 
   const handleReset = () => window.location.reload()
 
-  const handleSave = () => {
-    console.log('Pengaturan disimpan:', { profil, logo, akun, notifikasi, pembayaran, operasional })
-    alert('Perubahan pengaturan berhasil disimpan!')
+  const handleSave = async () => {
+    setSaveStatus('saving')
+    try {
+      const body: Record<string, string> = {}
+
+      if (activeTab === 'profil') {
+        if (profil.namaToko) body.name    = profil.namaToko
+        if (profil.lokasi)   body.city    = profil.lokasi
+        if (profil.deskripsi) body.address = profil.deskripsi
+      }
+
+      if (activeTab === 'akun') {
+        if (akun.namaPemilik) body.name  = akun.namaPemilik
+        if (akun.telepon)     body.phone = akun.telepon
+        if (akun.passwordBaru) {
+          if (akun.passwordBaru !== akun.konfirmasiPassword) {
+            setSaveStatus('error')
+            alert('Password baru dan konfirmasi tidak cocok')
+            return
+          }
+          body.passwordSaatIni = akun.passwordSaatIni
+          body.passwordBaru    = akun.passwordBaru
+        }
+      }
+
+      const res = await fetch(`${API_URL}/api/auth/profile`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+        body: JSON.stringify(body),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setSaveStatus('error')
+        alert(data.message || 'Gagal menyimpan perubahan')
+        return
+      }
+
+      // Update localStorage/sessionStorage dengan data terbaru
+      const storage = localStorage.getItem('token') ? localStorage : sessionStorage
+      storage.setItem('user', JSON.stringify(data.user))
+
+      setSaveStatus('success')
+      setTimeout(() => setSaveStatus(''), 3000)
+    } catch {
+      setSaveStatus('error')
+      alert('Tidak dapat terhubung ke server')
+    }
   }
 
   return (
@@ -131,17 +188,7 @@ export default function PengaturanPage() {
                     />
                   </FormGroup>
 
-                  <FormGroup label="Kategori utama" htmlFor="kategoriUtama">
-                    <SelectInput
-                      id="kategoriUtama"
-                      placeholder="Pilih Kategori"
-                      options={KATEGORI_OPTIONS}
-                      value={profil.kategori}
-                      onChange={(e) => setProfil((p) => ({ ...p, kategori: e.target.value }))}
-                    />
-                  </FormGroup>
-
-                  <FormGroup label="Lokasi toko" htmlFor="lokasiToko">
+                  <FormGroup label="Lokasi toko (kota)" htmlFor="lokasiToko">
                     <TextInput
                       id="lokasiToko"
                       placeholder="Contoh: Jayapura, Papua"
@@ -364,7 +411,12 @@ export default function PengaturanPage() {
             </SettingsCard>
           )}
 
-          <FormActions cancelLabel="Batalkan Perubahan" submitLabel="Simpan Perubahan" onCancel={handleReset} onSubmit={handleSave} />
+          <FormActions
+            cancelLabel="Batalkan Perubahan"
+            submitLabel={saveStatus === 'saving' ? 'Menyimpan...' : saveStatus === 'success' ? '✓ Tersimpan' : 'Simpan Perubahan'}
+            onCancel={handleReset}
+            onSubmit={handleSave}
+          />
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 export default function RegisterPage() {
   const [role, setRole] = useState<Role>('petani')
   const [name, setName] = useState('')
+  const [city, setCity] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -38,7 +39,7 @@ export default function RegisterPage() {
       const res = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, role }),
+        body: JSON.stringify({ name, email, password, role, city }),
       })
 
       const data = await res.json()
@@ -104,6 +105,23 @@ export default function RegisterPage() {
                 onChange={(e) => setName(e.target.value)}
                 className="login-input"
                 required
+              />
+            </div>
+          </div>
+
+          <div className="login-field">
+            <label className="login-field-label">
+              Kota / Kabupaten {role === 'pembeli' && <span style={{ color: '#bbb', fontWeight: 400 }}>(opsional)</span>}
+            </label>
+            <div className="login-input-wrapper">
+              <span className="login-input-icon">📍</span>
+              <input
+                type="text"
+                placeholder="Contoh: Jayapura, Bogor, Surabaya"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="login-input"
+                required={role === 'petani'}
               />
             </div>
           </div>

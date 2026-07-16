@@ -24,6 +24,9 @@ model Supplier {
   role        String   @default("petani") // "petani" | "pembeli"
   phone       String?
   address     String?
+  city        String?  // nama kota/kabupaten, contoh: "Jayapura"
+  latitude    Float?   // koordinat GPS (hasil geocoding dari city)
+  longitude   Float?   // koordinat GPS (hasil geocoding dari city)
   rating      Float    @default(5.0) // "Performa Toko" -> 4,8 / 5
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
