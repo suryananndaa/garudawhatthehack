@@ -1,0 +1,22 @@
+{
+  "name": "garuda-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@prisma/adapter-mariadb": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.19.2",
+    "mariadb": "^3.5.3"
+  },
+  "devDependencies": {
+    "prisma": "^7.8.0",
+    "tsx": "^4.23.1"
+  }
+}
