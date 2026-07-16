@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import './Pagination.css'
 
-export default function Pagination({ page, totalPages, totalItems, pageSize, onPageChange }) {
+export default function Pagination({ page, totalPages, totalItems, pageSize, onPageChange, itemLabel = 'item' }) {
   const start = totalItems === 0 ? 0 : (page - 1) * pageSize + 1
   const end = Math.min(page * pageSize, totalItems)
 
@@ -10,7 +10,7 @@ export default function Pagination({ page, totalPages, totalItems, pageSize, onP
   return (
     <div className="pagination">
       <p className="pagination__summary">
-        Menampilkan {start}-{end} dari {totalItems} produk
+        Menampilkan {start}-{end} dari {totalItems} {itemLabel}
       </p>
 
       <div className="pagination__controls">

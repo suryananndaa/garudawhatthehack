@@ -2,9 +2,9 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../components/layout/PageHeader.jsx'
 import ProdukToolbar from '../components/produk/ProdukToolbar.jsx'
-import ProdukTabs from '../components/produk/ProdukTabs.jsx'
+import Tabs from '../components/shared/Tabs.jsx'
 import ProdukTable from '../components/produk/ProdukTable.jsx'
-import Pagination from '../components/produk/Pagination.jsx'
+import Pagination from '../components/shared/Pagination.jsx'
 import './ProdukSayaPage.css'
 
 const ALL_PRODUCTS = [
@@ -85,7 +85,7 @@ export default function ProdukSayaPage() {
           kategoriOptions={KATEGORI_OPTIONS}
         />
 
-        <ProdukTabs tabs={TABS} active={activeTab} onChange={updateTab} />
+        <Tabs tabs={TABS} active={activeTab} onChange={updateTab} ariaLabel="Filter status produk" />
 
         <ProdukTable
           products={paginated}
@@ -99,6 +99,7 @@ export default function ProdukSayaPage() {
           totalItems={filtered.length}
           pageSize={PAGE_SIZE}
           onPageChange={setPage}
+          itemLabel="produk"
         />
       </section>
     </div>
