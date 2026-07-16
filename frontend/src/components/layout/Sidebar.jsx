@@ -6,7 +6,7 @@ import './Sidebar.css'
 // Item tanpa `to` masih placeholder (belum ada halamannya).
 const NAV_ITEMS = [
   { key: 'beranda', label: 'Beranda', icon: Home, to: '/' },
-  { key: 'produk', label: 'Produk Saya', icon: BookOpen },
+  { key: 'produk', label: 'Produk Saya', icon: BookOpen, to: '/produk-saya' },
   { key: 'pesanan', label: 'Pesanan', icon: Package },
   { key: 'pengiriman', label: 'Pengiriman', icon: Truck },
   { key: 'keuangan', label: 'Keuangan', icon: CreditCard },

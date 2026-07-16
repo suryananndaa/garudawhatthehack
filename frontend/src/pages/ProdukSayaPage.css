@@ -1,0 +1,16 @@
+.produk-saya {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.produk-saya__card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

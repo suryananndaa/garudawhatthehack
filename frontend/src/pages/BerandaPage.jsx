@@ -30,7 +30,8 @@ export default function BerandaPage() {
   return (
     <>
       <PageHeader
-        supplierName="CV. Matoa Papua Sentosa"
+        title="HALO, CV. Matoa Papua Sentosa!"
+        subtitle="Berikut ringkasan aktivitas Anda hari ini."
         onAddProduct={() => navigate('/tambah-produk')}
       />
 
