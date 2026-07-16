@@ -1,0 +1,29 @@
+.performance-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-card);
+}
+
+.performance-panel__title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  color: var(--color-ink-900);
+}
+
+.performance-panel__score {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  color: var(--color-ink-900);
+}
+
+.performance-panel__stars {
+  display: flex;
+  gap: 4px;
+  color: var(--color-ink-900);
+}
