@@ -781,6 +781,8 @@ export const SupplierScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
+  password: 'password',
+  role: 'role',
   phone: 'phone',
   address: 'address',
   rating: 'rating',
@@ -875,6 +877,8 @@ export const SupplierOrderByRelevanceFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
+  password: 'password',
+  role: 'role',
   phone: 'phone',
   address: 'address'
 } as const

@@ -20,6 +20,8 @@ model Supplier {
   id          String   @id @default(uuid())
   name        String   // "CV. Matoa Papua Sentosa"
   email       String   @unique
+  password    String   // hashed dengan bcrypt
+  role        String   @default("petani") // "petani" | "pembeli"
   phone       String?
   address     String?
   rating      Float    @default(5.0) // "Performa Toko" -> 4,8 / 5

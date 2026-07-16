@@ -38,6 +38,8 @@ export type SupplierMinAggregateOutputType = {
   id: string | null
   name: string | null
   email: string | null
+  password: string | null
+  role: string | null
   phone: string | null
   address: string | null
   rating: number | null
@@ -49,6 +51,8 @@ export type SupplierMaxAggregateOutputType = {
   id: string | null
   name: string | null
   email: string | null
+  password: string | null
+  role: string | null
   phone: string | null
   address: string | null
   rating: number | null
@@ -60,6 +64,8 @@ export type SupplierCountAggregateOutputType = {
   id: number
   name: number
   email: number
+  password: number
+  role: number
   phone: number
   address: number
   rating: number
@@ -81,6 +87,8 @@ export type SupplierMinAggregateInputType = {
   id?: true
   name?: true
   email?: true
+  password?: true
+  role?: true
   phone?: true
   address?: true
   rating?: true
@@ -92,6 +100,8 @@ export type SupplierMaxAggregateInputType = {
   id?: true
   name?: true
   email?: true
+  password?: true
+  role?: true
   phone?: true
   address?: true
   rating?: true
@@ -103,6 +113,8 @@ export type SupplierCountAggregateInputType = {
   id?: true
   name?: true
   email?: true
+  password?: true
+  role?: true
   phone?: true
   address?: true
   rating?: true
@@ -201,6 +213,8 @@ export type SupplierGroupByOutputType = {
   id: string
   name: string
   email: string
+  password: string
+  role: string
   phone: string | null
   address: string | null
   rating: number
@@ -235,6 +249,8 @@ export type SupplierWhereInput = {
   id?: Prisma.StringFilter<"Supplier"> | string
   name?: Prisma.StringFilter<"Supplier"> | string
   email?: Prisma.StringFilter<"Supplier"> | string
+  password?: Prisma.StringFilter<"Supplier"> | string
+  role?: Prisma.StringFilter<"Supplier"> | string
   phone?: Prisma.StringNullableFilter<"Supplier"> | string | null
   address?: Prisma.StringNullableFilter<"Supplier"> | string | null
   rating?: Prisma.FloatFilter<"Supplier"> | number
@@ -249,6 +265,8 @@ export type SupplierOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  password?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   rating?: Prisma.SortOrder
@@ -267,6 +285,8 @@ export type SupplierWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.SupplierWhereInput[]
   NOT?: Prisma.SupplierWhereInput | Prisma.SupplierWhereInput[]
   name?: Prisma.StringFilter<"Supplier"> | string
+  password?: Prisma.StringFilter<"Supplier"> | string
+  role?: Prisma.StringFilter<"Supplier"> | string
   phone?: Prisma.StringNullableFilter<"Supplier"> | string | null
   address?: Prisma.StringNullableFilter<"Supplier"> | string | null
   rating?: Prisma.FloatFilter<"Supplier"> | number
@@ -281,6 +301,8 @@ export type SupplierOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  password?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   rating?: Prisma.SortOrder
@@ -300,6 +322,8 @@ export type SupplierScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Supplier"> | string
   name?: Prisma.StringWithAggregatesFilter<"Supplier"> | string
   email?: Prisma.StringWithAggregatesFilter<"Supplier"> | string
+  password?: Prisma.StringWithAggregatesFilter<"Supplier"> | string
+  role?: Prisma.StringWithAggregatesFilter<"Supplier"> | string
   phone?: Prisma.StringNullableWithAggregatesFilter<"Supplier"> | string | null
   address?: Prisma.StringNullableWithAggregatesFilter<"Supplier"> | string | null
   rating?: Prisma.FloatWithAggregatesFilter<"Supplier"> | number
@@ -311,6 +335,8 @@ export type SupplierCreateInput = {
   id?: string
   name: string
   email: string
+  password: string
+  role?: string
   phone?: string | null
   address?: string | null
   rating?: number
@@ -325,6 +351,8 @@ export type SupplierUncheckedCreateInput = {
   id?: string
   name: string
   email: string
+  password: string
+  role?: string
   phone?: string | null
   address?: string | null
   rating?: number
@@ -339,6 +367,8 @@ export type SupplierUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -353,6 +383,8 @@ export type SupplierUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -367,6 +399,8 @@ export type SupplierCreateManyInput = {
   id?: string
   name: string
   email: string
+  password: string
+  role?: string
   phone?: string | null
   address?: string | null
   rating?: number
@@ -378,6 +412,8 @@ export type SupplierUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -389,6 +425,8 @@ export type SupplierUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -406,6 +444,8 @@ export type SupplierCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  password?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
   rating?: Prisma.SortOrder
@@ -421,6 +461,8 @@ export type SupplierMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  password?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
   rating?: Prisma.SortOrder
@@ -432,6 +474,8 @@ export type SupplierMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  password?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
   rating?: Prisma.SortOrder
@@ -514,6 +558,8 @@ export type SupplierCreateWithoutProductsInput = {
   id?: string
   name: string
   email: string
+  password: string
+  role?: string
   phone?: string | null
   address?: string | null
   rating?: number
@@ -527,6 +573,8 @@ export type SupplierUncheckedCreateWithoutProductsInput = {
   id?: string
   name: string
   email: string
+  password: string
+  role?: string
   phone?: string | null
   address?: string | null
   rating?: number
@@ -556,6 +604,8 @@ export type SupplierUpdateWithoutProductsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -569,6 +619,8 @@ export type SupplierUncheckedUpdateWithoutProductsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -582,6 +634,8 @@ export type SupplierCreateWithoutOrdersInput = {
   id?: string
   name: string
   email: string
+  password: string
+  role?: string
   phone?: string | null
   address?: string | null
   rating?: number
@@ -595,6 +649,8 @@ export type SupplierUncheckedCreateWithoutOrdersInput = {
   id?: string
   name: string
   email: string
+  password: string
+  role?: string
   phone?: string | null
   address?: string | null
   rating?: number
@@ -624,6 +680,8 @@ export type SupplierUpdateWithoutOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -637,6 +695,8 @@ export type SupplierUncheckedUpdateWithoutOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -650,6 +710,8 @@ export type SupplierCreateWithoutNotificationsInput = {
   id?: string
   name: string
   email: string
+  password: string
+  role?: string
   phone?: string | null
   address?: string | null
   rating?: number
@@ -663,6 +725,8 @@ export type SupplierUncheckedCreateWithoutNotificationsInput = {
   id?: string
   name: string
   email: string
+  password: string
+  role?: string
   phone?: string | null
   address?: string | null
   rating?: number
@@ -692,6 +756,8 @@ export type SupplierUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -705,6 +771,8 @@ export type SupplierUncheckedUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -767,6 +835,8 @@ export type SupplierSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   id?: boolean
   name?: boolean
   email?: boolean
+  password?: boolean
+  role?: boolean
   phone?: boolean
   address?: boolean
   rating?: boolean
@@ -784,6 +854,8 @@ export type SupplierSelectScalar = {
   id?: boolean
   name?: boolean
   email?: boolean
+  password?: boolean
+  role?: boolean
   phone?: boolean
   address?: boolean
   rating?: boolean
@@ -791,7 +863,7 @@ export type SupplierSelectScalar = {
   updatedAt?: boolean
 }
 
-export type SupplierOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "phone" | "address" | "rating" | "createdAt" | "updatedAt", ExtArgs["result"]["supplier"]>
+export type SupplierOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "phone" | "address" | "rating" | "createdAt" | "updatedAt", ExtArgs["result"]["supplier"]>
 export type SupplierInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   products?: boolean | Prisma.Supplier$productsArgs<ExtArgs>
   orders?: boolean | Prisma.Supplier$ordersArgs<ExtArgs>
@@ -810,6 +882,8 @@ export type $SupplierPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     id: string
     name: string
     email: string
+    password: string
+    role: string
     phone: string | null
     address: string | null
     rating: number
@@ -1190,6 +1264,8 @@ export interface SupplierFieldRefs {
   readonly id: Prisma.FieldRef<"Supplier", 'String'>
   readonly name: Prisma.FieldRef<"Supplier", 'String'>
   readonly email: Prisma.FieldRef<"Supplier", 'String'>
+  readonly password: Prisma.FieldRef<"Supplier", 'String'>
+  readonly role: Prisma.FieldRef<"Supplier", 'String'>
   readonly phone: Prisma.FieldRef<"Supplier", 'String'>
   readonly address: Prisma.FieldRef<"Supplier", 'String'>
   readonly rating: Prisma.FieldRef<"Supplier", 'Float'>
