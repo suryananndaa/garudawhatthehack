@@ -1,0 +1,51 @@
+.check-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.check-option__input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.check-option__box {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: 6px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.check-option__box--checked {
+  background: var(--color-forest-600);
+  border-color: var(--color-forest-600);
+}
+
+.check-option__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.check-option__label {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--color-ink-900);
+}
+
+.check-option__description {
+  font-size: 13px;
+  color: var(--color-ink-500);
+}

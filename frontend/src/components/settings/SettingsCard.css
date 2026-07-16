@@ -1,0 +1,42 @@
+.settings-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.settings-card__head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settings-card__title {
+  margin: 0;
+  font-size: 16.5px;
+  font-weight: 700;
+  color: var(--color-ink-900);
+}
+
+.settings-card__subtitle {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--color-ink-500);
+}
+
+.settings-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.settings-card__footer {
+  border-top: 1px solid var(--color-border);
+  padding-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
