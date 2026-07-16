@@ -8,10 +8,12 @@ export default function PageHeader({ title, subtitle, ctaLabel = 'Tambah Produk'
         <h2 className="page-header__title">{title}</h2>
         <p className="page-header__subtitle">{subtitle}</p>
       </div>
-      <button className="page-header__cta" onClick={onAddProduct}>
-        <Plus size={18} strokeWidth={2.5} />
-        {ctaLabel}
-      </button>
+      {onAddProduct && (
+        <button className="page-header__cta" onClick={onAddProduct}>
+          <Plus size={18} strokeWidth={2.5} />
+          {ctaLabel}
+        </button>
+      )}
     </header>
   )
 }

@@ -5,12 +5,12 @@ import './Sidebar.css'
 // Item dengan `to` akan berpindah halaman sungguhan lewat react-router.
 // Item tanpa `to` masih placeholder (belum ada halamannya).
 const NAV_ITEMS = [
-  { key: 'beranda', label: 'Beranda', icon: Home, to: '/' },
-  { key: 'produk', label: 'Produk Saya', icon: BookOpen, to: '/produk-saya' },
-  { key: 'pesanan', label: 'Pesanan', icon: Package },
-  { key: 'pengiriman', label: 'Pengiriman', icon: Truck },
-  { key: 'keuangan', label: 'Keuangan', icon: CreditCard },
-  { key: 'pengaturan', label: 'Pengaturan', icon: Settings, to: '/pengaturan' },
+  { key: 'beranda',    label: 'Beranda',     icon: Home,       to: '/petani/dashboard' },
+  { key: 'produk',     label: 'Produk Saya', icon: BookOpen,   to: '/petani/produk-saya' },
+  { key: 'pesanan',    label: 'Pesanan',     icon: Package,    to: '/petani/pesanan' },
+  { key: 'pengiriman', label: 'Pengiriman',  icon: Truck,      to: '/petani/pengiriman' },
+  { key: 'keuangan',   label: 'Keuangan',    icon: CreditCard },
+  { key: 'pengaturan', label: 'Pengaturan',  icon: Settings,   to: '/petani/pengaturan' },
 ]
 
 export default function Sidebar() {

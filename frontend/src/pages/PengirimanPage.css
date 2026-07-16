@@ -1,0 +1,145 @@
+.pengiriman { padding: 0; }
+
+.pengiriman__card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  overflow: hidden;
+}
+
+.pengiriman__toolbar {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.pengiriman__search {
+  width: 300px;
+  padding: 9px 14px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+  background: #fafafa;
+  font-family: inherit;
+}
+
+.pengiriman__search:focus {
+  border-color: #1B4332;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(27,67,50,0.07);
+}
+
+.pengiriman__tabs {
+  display: flex;
+  gap: 4px;
+  padding: 12px 20px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.pengiriman__tab {
+  padding: 8px 14px;
+  border: none;
+  background: none;
+  font-size: 13px;
+  color: #888;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+.pengiriman__tab:hover { color: #333; }
+
+.pengiriman__tab--active {
+  color: #1B4332;
+  border-bottom-color: #1B4332;
+}
+
+.pengiriman__tab-count {
+  background: #f0f0f0;
+  color: #666;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.pengiriman__tab--active .pengiriman__tab-count {
+  background: #e0f2e9;
+  color: #1B4332;
+}
+
+.pengiriman__table-wrapper { overflow-x: auto; }
+
+.pengiriman__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.pengiriman__table thead tr {
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.pengiriman__table th {
+  padding: 11px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.pengiriman__table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid #f9f9f9;
+  color: #333;
+  vertical-align: middle;
+}
+
+.pengiriman__table tbody tr:last-child td { border-bottom: none; }
+.pengiriman__table tbody tr:hover td { background: #fafefe; }
+
+.pengiriman__id { font-weight: 600; color: #1B4332 !important; font-size: 12px; }
+.pengiriman__produk { color: #666 !important; font-size: 12px; }
+.pengiriman__total { font-weight: 600; }
+
+.pengiriman__badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.pengiriman__detail-btn {
+  padding: 5px 14px;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  background: white;
+  font-size: 12px;
+  cursor: pointer;
+  color: #555;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.pengiriman__detail-btn:hover {
+  border-color: #1B4332;
+  color: #1B4332;
+  background: #f0faf4;
+}
+
+.pengiriman__empty {
+  text-align: center;
+  color: #bbb;
+  padding: 40px !important;
+  font-size: 13px;
+}

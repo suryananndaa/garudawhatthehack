@@ -1,0 +1,253 @@
+.pengiriman-detail { max-width: 100%; }
+
+.pengiriman-detail__notfound {
+  text-align: center;
+  padding: 60px 20px;
+  color: #888;
+}
+
+.pengiriman-detail__notfound h2 {
+  margin: 16px 0 24px;
+  font-size: 18px;
+  color: #333;
+}
+
+.pengiriman-detail__back-btn {
+  padding: 10px 20px;
+  background: #1B4332;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.pengiriman-detail__header {
+  margin-bottom: 24px;
+}
+
+.pengiriman-detail__back {
+  background: none;
+  border: none;
+  color: #1B4332;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 12px;
+  display: block;
+  font-family: inherit;
+}
+
+.pengiriman-detail__back:hover { text-decoration: underline; }
+
+.pengiriman-detail__title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111;
+  margin: 0 0 4px;
+}
+
+.pengiriman-detail__sub {
+  font-size: 12px;
+  color: #aaa;
+  margin: 0;
+}
+
+.pengiriman-detail__body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pengiriman-detail__card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  padding: 20px 24px;
+}
+
+.pengiriman-detail__section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 16px;
+}
+
+.pengiriman-detail__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid #f9f9f9;
+  font-size: 13px;
+}
+
+.pengiriman-detail__row:last-child { border-bottom: none; }
+
+.pengiriman-detail__label { color: #888; }
+
+.pengiriman-detail__value {
+  color: #333;
+  font-weight: 500;
+  text-align: right;
+  max-width: 60%;
+}
+
+.pengiriman-detail__row--total {
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: none;
+}
+
+.pengiriman-detail__total {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1B4332 !important;
+}
+
+/* ── Tracking Stepper Horizontal ─────────────────── */
+.tracking__stepper {
+  margin-bottom: 24px;
+}
+
+/* Baris dot + garis penghubung */
+.tracking__dots-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.tracking__dot-col {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.tracking__dot-col:last-child {
+  flex: 0;
+}
+
+.tracking__dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e5e5e5;
+  color: #bbb;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  z-index: 1;
+}
+
+.tracking__dot.done {
+  background: #1B4332;
+  color: white;
+}
+
+.tracking__dot.active {
+  background: #1B4332;
+  color: white;
+  box-shadow: 0 0 0 5px rgba(27, 67, 50, 0.15);
+}
+
+/* Garis antara dot */
+.tracking__line {
+  flex: 1;
+  height: 2px;
+  background: #e5e5e5;
+  margin: 0 4px;
+  transition: background 0.2s;
+}
+
+.tracking__line.done {
+  background: #1B4332;
+}
+
+/* Baris label */
+.tracking__labels-row {
+  display: flex;
+}
+
+.tracking__label-col {
+  flex: 1;
+  padding-right: 8px;
+  opacity: 0.45;
+}
+
+.tracking__label-col.done,
+.tracking__label-col.active {
+  opacity: 1;
+}
+
+.tracking__label-col:last-child {
+  padding-right: 0;
+  text-align: right;
+}
+
+.tracking__step-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.tracking__label-col.active .tracking__step-label {
+  color: #1B4332;
+}
+
+.tracking__step-desc {
+  font-size: 11px;
+  color: #aaa;
+  line-height: 1.4;
+}
+
+.tracking__action {
+  padding-top: 4px;
+}
+
+.tracking__btn-next {
+  width: 100%;
+  padding: 12px;
+  background: #1B4332;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.tracking__btn-next:hover { background: #0f2d21; }
+
+.tracking__done-msg {
+  text-align: center;
+  font-size: 13px;
+  color: #22c55e;
+  font-weight: 600;
+  padding: 8px 0 4px;
+}
+
+/* ↓↓↓ tambahan, tempel di akhir PengirimanDetailPage.css yang udah ada ↓↓↓ */
+/* dot sekarang jadi <button>, perlu reset style bawaan browser + kasih hover */
+
+.tracking__dot {
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+}
+
+.tracking__dot:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 0 5px rgba(27, 67, 50, 0.1);
+}
