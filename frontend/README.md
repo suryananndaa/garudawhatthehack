@@ -1,32 +1,51 @@
-# React + TypeScript + Vite
+# Taniku - Dashboard Supplier
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Halaman "Beranda" dashboard supplier Taniku, dibuat dengan Vite + React.
+CSS dipisah per komponen (setiap komponen punya file `.css` sendiri di `src/components/`).
 
-Currently, two official plugins are available:
+## Struktur folder
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```
+taniku-dashboard/
+├── index.html
+├── package.json
+├── vite.config.js
+├── public/
+│   └── leaf.svg
+└── src/
+    ├── main.jsx
+    ├── index.css          # reset + design tokens (warna, font, radius)
+    ├── App.jsx            # menyusun layout halaman
+    ├── App.css
+    └── components/
+        ├── Sidebar.jsx / .css
+        ├── PageHeader.jsx / .css      (judul "Halo, ..." + tombol Tambah Produk)
+        ├── StatsGrid.jsx / .css       (grid 4 kartu ringkasan)
+        ├── StatCard.jsx / .css        (satu kartu ringkasan)
+        ├── ProductTable.jsx / .css    (tabel Produk Terlaris)
+        ├── PerformancePanel.jsx / .css (Performa Toko / rating bintang)
+        └── NotificationPanel.jsx / .css
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Cara menjalankan
+
+```bash
+npm install
+npm run dev
+```
+
+Lalu buka URL yang muncul di terminal (biasanya `http://localhost:5173`).
+
+Untuk build production:
+
+```bash
+npm run build
+npm run preview
+```
+
+## Kustomisasi
+
+- Data statis (angka statistik, daftar produk, dsb) ada di `src/App.jsx` — tinggal
+  ganti array `STATS` dan `PRODUCTS`, atau sambungkan ke API/backend sungguhan.
+- Warna & font utama diatur lewat CSS variable di `src/index.css` (`--color-forest-*`,
+  `--font-display`, dll) supaya gampang diganti tanpa menyentuh tiap komponen.

@@ -1,0 +1,96 @@
+.tambah-produk {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tambah-produk__body {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  align-items: start;
+}
+
+.tambah-produk__main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.tambah-produk__side {
+  min-width: 0;
+}
+
+.form-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-card--detail {
+  gap: 18px;
+}
+
+.form-card__heading {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--color-ink-900);
+}
+
+.form-card__top-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 28px;
+}
+
+.form-card__col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.form-card__col:has(.tambah-produk__deskripsi) {
+  height: 100%;
+}
+
+.tambah-produk__deskripsi {
+  min-height: 170px;
+  height: 100%;
+}
+
+.form-card__divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 0;
+}
+
+.form-card__foto {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tambah-produk__pengiriman {
+  min-height: 90px;
+}
+
+@media (max-width: 1000px) {
+  .tambah-produk__body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .form-card__top-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
