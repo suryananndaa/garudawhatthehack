@@ -143,7 +143,9 @@
 }
 
 .login-role-btn-icon {
-  font-size: 22px;
+  display: flex;
+  justify-content: center;
+  color: #bbb;
 }
 
 .login-role-btn-text {
@@ -153,6 +155,7 @@
   font-weight: 500;
 }
 
+.login-role-btn.active .login-role-btn-icon,
 .login-role-btn.active .login-role-btn-text {
   color: #1B4332;
 }
@@ -177,8 +180,9 @@
   left: 13px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 14px;
-  opacity: 0.35;
+  display: flex;
+  color: #999;
+  opacity: 0.7;
 }
 
 .login-input {
@@ -208,9 +212,15 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 14px;
-  opacity: 0.35;
+  display: flex;
+  color: #999;
+  opacity: 0.7;
   padding: 0;
+}
+
+.login-eye-btn:hover {
+  color: #1B4332;
+  opacity: 1;
 }
 
 .login-options {
@@ -282,6 +292,10 @@
   cursor: not-allowed;
 }
 
+.login-submit-arrow {
+  flex-shrink: 0;
+}
+
 .login-divider {
   display: flex;
   align-items: center;
@@ -326,18 +340,6 @@
   margin-top: 18px;
   font-size: 12px;
   color: #aaa;
-}
-
-.login-security {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid #f5f5f5;
-  font-size: 11px;
-  color: #ccc;
 }
 
 /* ── GPS button ──────────────────────────────────────── */

@@ -7,12 +7,16 @@ import RegisterPage from './features/auth/RegisterPage.tsx'
 import BerandaPage from './pages/BerandaPage.jsx'
 import ProdukSayaPage from './pages/ProdukSayaPage.jsx'
 import TambahProdukPage from './pages/TambahProdukPage.jsx'
+import EditProdukPage from './pages/EditProdukPage.jsx'
 import PesananPage from './pages/PesananPage.jsx'
 import PengirimanPage from './pages/PengirimanPage.jsx'
 import PengirimanDetailPage from './pages/PengirimanDetailPage.jsx'
 import PengaturanPage from './pages/PengaturanPage.jsx'
 import LengkapiProfilPage from './pages/LengkapiProfilPage.jsx'
 import UMKMDashboard from './umkm/Dashboard.jsx'
+import JelajahiPage from './umkm/JelajahiPage.jsx'
+import ProfileTokoPage from './umkm/ProfileTokoPage.jsx'
+import DetailProdukPage from './umkm/DetailProdukPage.jsx'
 import PesananSaya from './umkm/Pesanan.jsx'
 import './index.css'
 
@@ -38,6 +42,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="dashboard" element={<BerandaPage />} />
           <Route path="produk-saya" element={<ProdukSayaPage />} />
           <Route path="tambah-produk" element={<TambahProdukPage />} />
+          <Route path="produk/:id/edit" element={<EditProdukPage />} />
           <Route path="pesanan" element={<PesananPage />} />
           <Route path="pengiriman" element={<PengirimanPage />} />
           <Route path="pengiriman/:id" element={<PengirimanDetailPage />} />
@@ -48,6 +53,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         {/* ===== PEMBELI / UMKM ===== */}
         <Route path="/pembeli/dashboard" element={<PrivateRoute><UMKMDashboard /></PrivateRoute>} />
         <Route path="/pembeli/pesanan"   element={<PrivateRoute><PesananSaya /></PrivateRoute>} />
+        <Route path="/pembeli/jelajahi/:category" element={<PrivateRoute><JelajahiPage /></PrivateRoute>} />
+        <Route path="/pembeli/toko/:id" element={<PrivateRoute><ProfileTokoPage /></PrivateRoute>} />
+        <Route path="/pembeli/produk/:id" element={<PrivateRoute><DetailProdukPage /></PrivateRoute>} />
         <Route path="/pembeli" element={<Navigate to="/pembeli/dashboard" replace />} />
       </Routes>
     </BrowserRouter>

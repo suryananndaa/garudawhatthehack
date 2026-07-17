@@ -113,7 +113,7 @@ export default function ProdukSayaPage() {
 
             <ProdukTable
               products={paginated}
-              onEdit={(p) => alert(`Edit produk: ${p.name}`)}
+              onEdit={(p) => navigate(`/petani/produk/${p.id}/edit`)}
               onMore={(p) => alert(`Aksi lainnya untuk: ${p.name}`)}
             />
 

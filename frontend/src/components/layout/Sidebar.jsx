@@ -1,5 +1,5 @@
-import { NavLink } from 'react-router-dom'
-import { Home, BookOpen, Package, Truck, Settings, Sprout } from 'lucide-react'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { Home, BookOpen, Package, Truck, Settings, Sprout, LogOut } from 'lucide-react'
 import './Sidebar.css'
 
 // Item dengan `to` akan berpindah halaman sungguhan lewat react-router.
@@ -13,6 +13,16 @@ const NAV_ITEMS = [
 ]
 
 export default function Sidebar() {
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('user')
+    navigate('/login', { replace: true })
+  }
+
   return (
     <aside className="sidebar">
       <div className="sidebar__brand">
@@ -44,6 +54,13 @@ export default function Sidebar() {
           )
         )}
       </nav>
+
+      <div className="sidebar__footer">
+        <button className="sidebar__item sidebar__logout" type="button" onClick={handleLogout}>
+          <LogOut size={18} strokeWidth={2} />
+          <span>Keluar</span>
+        </button>
+      </div>
     </aside>
   )
 }

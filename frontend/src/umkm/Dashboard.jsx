@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { NavLink } from 'react-router-dom'
 import './Dashboard.css'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+
+function getToken() {
+  return localStorage.getItem('token') || sessionStorage.getItem('token')
+}
+
 // ============ DATA ============
 const INITIAL_NOTIFICATIONS = [
   { id: 1, type: 'order',  title: 'Pesanan sedang diproses', desc: 'Pesanan #INV-2507160-0012 sedang disiapkan oleh produsen.', time: '10 menit lalu', unread: true },
@@ -204,6 +210,30 @@ function ProducerCard({ producer }) {
   )
 }
 
+// Kartu hasil pencarian petani (dari /api/recommend) — bentuknya mirip ProducerCard
+// tapi datanya nyambung ke produk & harga asli, bukan mock.
+function SearchResultCard({ item, onClick }) {
+  return (
+    <div className="producer-card" onClick={onClick}>
+      <div className="producer-card__img">
+        <span className="producer-card__dist">
+          {item.distanceKm < 9000 ? `${item.distanceKm} km` : '—'}
+        </span>
+      </div>
+      <div className="producer-card__body">
+        <p className="producer-card__name">{item.supplierName}</p>
+        <p className="producer-card__loc">
+          {item.productName} · {item.city || 'Lokasi tidak diketahui'}
+        </p>
+        <p className="producer-card__loc">
+          Rp {Number(item.pricePerKg).toLocaleString('id-ID')}/kg · Stok {item.quantityKg} kg
+        </p>
+        <p className="producer-card__rating"><StarIcon /> {item.rating?.toFixed?.(1) ?? item.rating}</p>
+      </div>
+    </div>
+  )
+}
+
 // ============ MAIN DASHBOARD ============
 export default function UMKMDashboard() {
   const navigate = useNavigate()
@@ -215,6 +245,85 @@ export default function UMKMDashboard() {
   const [cartItems, setCartItems] = useState(INITIAL_CART)
   const [openPanel, setOpenPanel] = useState(null) // null | 'notif' | 'cart'
   const actionsRef = useRef(null)
+
+  const [profileCity, setProfileCity] = useState(user?.city ?? null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [searchLoading, setSearchLoading] = useState(false)
+  const [searched, setSearched] = useState(false)
+
+  // Data real dari backend
+  const [popularProducts, setPopularProducts] = useState([])
+  const [trustedSuppliers, setTrustedSuppliers] = useState([])
+  const [rescueDeals, setRescueDeals] = useState([])
+  const [loadingPopular, setLoadingPopular] = useState(true)
+  const [loadingSuppliers, setLoadingSuppliers] = useState(true)
+  const [loadingRescue, setLoadingRescue] = useState(true)
+
+  // Ambil profil lengkap (termasuk kota) buat dasar pencarian jarak terdekat
+  useEffect(() => {
+    const token = getToken()
+    if (!token) return
+    fetch(`${API_URL}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(d => { if (d.user?.city) setProfileCity(d.user.city) })
+      .catch(() => {})
+  }, [])
+
+  // Fetch produk populer
+  useEffect(() => {
+    setLoadingPopular(true)
+    fetch(`${API_URL}/api/dashboard/popular?limit=5`)
+      .then(r => r.json())
+      .then(d => setPopularProducts(d.products || []))
+      .catch(() => setPopularProducts([]))
+      .finally(() => setLoadingPopular(false))
+  }, [])
+
+  // Fetch produsen terpercaya
+  useEffect(() => {
+    setLoadingSuppliers(true)
+    const cityParam = profileCity ? `?city=${encodeURIComponent(profileCity)}&limit=3` : '?limit=3'
+    fetch(`${API_URL}/api/dashboard/suppliers${cityParam}`)
+      .then(r => r.json())
+      .then(d => {
+        console.log('Suppliers response:', d)
+        setTrustedSuppliers(d.suppliers || [])
+      })
+      .catch((err) => {
+        console.error('Error fetching suppliers:', err)
+        setTrustedSuppliers([])
+      })
+      .finally(() => setLoadingSuppliers(false))
+  }, [profileCity])
+
+  // Fetch rescue deals (produk mau expire dengan diskon)
+  useEffect(() => {
+    setLoadingRescue(true)
+    fetch(`${API_URL}/api/dashboard/rescue-deals?limit=6`)
+      .then(r => r.json())
+      .then(d => setRescueDeals(d.products || []))
+      .catch(() => setRescueDeals([]))
+      .finally(() => setLoadingRescue(false))
+  }, [])
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+    const q = searchQuery.trim()
+    if (!q) return
+
+    setSearchLoading(true)
+    setSearched(true)
+    fetch(`${API_URL}/api/recommend`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ product: q, city: profileCity, preset: 'seimbang' }),
+    })
+      .then(r => r.json())
+      .then(d => setSearchResults(d.suppliers ?? []))
+      .catch(() => setSearchResults([]))
+      .finally(() => setSearchLoading(false))
+  }
 
   useEffect(() => {
     function handleOutside(e) {
@@ -333,15 +442,21 @@ export default function UMKMDashboard() {
             <h1 className="topbar__name">{userName}</h1>
           </div>
 
-          <div className="topbar__search">
-            <input type="text" placeholder="Cari produk segar (tomat, cabai, beras, ikan..)" aria-label="Cari produk" />
-            <button type="button" aria-label="Cari">
+          <form className="topbar__search" onSubmit={handleSearch}>
+            <input
+              type="text"
+              placeholder="Cari produk segar (tomat, cabai, beras, ikan..)"
+              aria-label="Cari produk"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button type="submit" aria-label="Cari">
               <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
                 <circle cx="11" cy="11" r="6.5" stroke="white" strokeWidth="2"/>
                 <path d="m20 20-3.4-3.4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
               </svg>
             </button>
-          </div>
+          </form>
 
           <div className="topbar__actions" ref={actionsRef}>
             <div className="dropdown-anchor">
@@ -441,40 +556,142 @@ export default function UMKMDashboard() {
             <section className="section">
               <h3 className="section__title">Jelajahi Kategori</h3>
               <div className="category-row">
-                {[
-                  { icon: '🥕', label: 'Sayuran' },
-                  { icon: '🍇', label: 'Buah' },
-                  { icon: '⋯', label: 'Lainnya' },
-                ].map((cat) => (
-                  <button key={cat.label} className="category-card" type="button">
-                    <span className="category-card__icon">{cat.icon}</span>
-                    <span>{cat.label}</span>
+                <button className="category-card" type="button" onClick={() => navigate('/pembeli/jelajahi/sayur')}>
+                  <span className="category-card__icon">🥕</span>
+                  <span>Sayuran</span>
+                </button>
+                <button className="category-card" type="button" onClick={() => navigate('/pembeli/jelajahi/buah')}>
+                  <span className="category-card__icon">🍇</span>
+                  <span>Buah</span>
+                </button>
+                <button className="category-card" type="button">
+                  <span className="category-card__icon">⋯</span>
+                  <span>Lainnya</span>
+                </button>
+              </div>
+            </section>
+
+            {/* FLASH SALE - RESCUE DEALS */}
+            {!searched && !loadingRescue && rescueDeals.length > 0 && (
+              <section className="flash-sale-section">
+                <div className="flash-sale-header">
+                  <div className="flash-sale-header__left">
+                    <span className="flash-sale-badge">FLASH SALE</span>
+                    <h3>Hemat Hingga 30% - Selamatkan dari Terbuang!</h3>
+                    <p>Produk masih layak, harga super murah. Buruan sebelum kehabisan!</p>
+                  </div>
+                  <button className="flash-sale-viewall" onClick={() => navigate('/pembeli/jelajahi/buah')}>
+                    Lihat Semua
+                    <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
+                      <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </button>
-                ))}
-              </div>
-            </section>
+                </div>
+                <div className="flash-sale-grid">
+                  {rescueDeals.map((p) => (
+                    <button key={p.id} className="flash-card" type="button" onClick={() => navigate(`/pembeli/produk/${p.id}`)}>
+                      <div className="flash-card__badge">
+                        <span className="flash-card__discount">-{p.discount}%</span>
+                      </div>
+                      <div className="flash-card__img"></div>
+                      <div className="flash-card__body">
+                        <p className="flash-card__name">{p.name}</p>
+                        <div className="flash-card__prices">
+                          <span className="flash-card__price">Rp {p.pricePerKg.toLocaleString('id-ID')}</span>
+                          <span className="flash-card__original">Rp {p.originalPrice.toLocaleString('id-ID')}</span>
+                        </div>
+                        <div className="flash-card__meta">
+                          <span className="flash-card__stock">{p.quantityKg} kg</span>
+                          <span className="flash-card__rating"><StarIcon /> {p.rating.toFixed(1)}</span>
+                        </div>
+                        <p className="flash-card__supplier">{p.supplierName}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
 
-            {/* Produk Populer */}
-            <section className="section">
-              <div className="section__head">
-                <h3 className="section__title">Produk Populer</h3>
-                <a href="#" className="section__link">Lihat semua</a>
-              </div>
-              <div className="product-row">
-                {products.map((p, i) => <ProductCard key={i} product={p} />)}
-              </div>
-            </section>
+            {searched ? (
+              /* Hasil Pencarian — data asli dari /api/recommend, bukan mock */
+              <section className="section">
+                <div className="section__head">
+                  <h3 className="section__title">Hasil Pencarian: "{searchQuery}"</h3>
+                </div>
+                {searchLoading ? (
+                  <p className="section__title" style={{ fontWeight: 400, fontSize: 13 }}>Mencari petani...</p>
+                ) : searchResults.length === 0 ? (
+                  <p className="section__title" style={{ fontWeight: 400, fontSize: 13 }}>
+                    Tidak ada petani yang menjual "{searchQuery}" saat ini.
+                  </p>
+                ) : (
+                  <div className="producer-row">
+                    {searchResults.map((item) => (
+                      <SearchResultCard
+                        key={`${item.supplierId}-${item.productId}`}
+                        item={item}
+                        onClick={() => navigate(`/pembeli/toko/${item.supplierId}`)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </section>
+            ) : (
+              <>
+                {/* Produk Populer - DATA REAL */}
+                <section className="section">
+                  <div className="section__head">
+                    <h3 className="section__title">Produk Populer</h3>
+                    <button className="section__link" onClick={() => navigate('/pembeli/jelajahi/buah')}>Lihat semua</button>
+                  </div>
+                  {loadingPopular ? (
+                    <p style={{ fontSize: 13, color: 'var(--ink-600)' }}>Memuat produk...</p>
+                  ) : popularProducts.length === 0 ? (
+                    <p style={{ fontSize: 13, color: 'var(--ink-600)' }}>Belum ada produk tersedia</p>
+                  ) : (
+                    <div className="product-row">
+                      {popularProducts.map((p) => (
+                        <button key={p.id} className="product-card" type="button" onClick={() => navigate(`/pembeli/produk/${p.id}`)}>
+                          <div className="product-card__img" />
+                          <div className="product-card__body">
+                            <p className="product-card__name">{p.name}</p>
+                            <p className="product-card__meta">{p.predictedTier} · {p.city || 'Lokasi tidak diketahui'}</p>
+                            <p className="product-card__price">Rp {p.pricePerKg.toLocaleString('id-ID')}/kg</p>
+                            <p className="product-card__rating"><StarIcon /> {p.rating.toFixed(1)}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </section>
 
-            {/* Produsen */}
-            <section className="section">
-              <div className="section__head">
-                <h3 className="section__title">Produsen Terpercaya di Sekitar Anda</h3>
-                <a href="#" className="section__link">Lihat semua</a>
-              </div>
-              <div className="producer-row">
-                {producers.map((p, i) => <ProducerCard key={i} producer={p} />)}
-              </div>
-            </section>
+                {/* Produsen Terpercaya - DATA REAL */}
+                <section className="section">
+                  <div className="section__head">
+                    <h3 className="section__title">Produsen Terpercaya{profileCity ? ` di ${profileCity}` : ''}</h3>
+                  </div>
+                  {loadingSuppliers ? (
+                    <p style={{ fontSize: 13, color: 'var(--ink-600)' }}>Memuat produsen...</p>
+                  ) : trustedSuppliers.length === 0 ? (
+                    <p style={{ fontSize: 13, color: 'var(--ink-600)' }}>Belum ada produsen tersedia</p>
+                  ) : (
+                    <div className="producer-row">
+                      {trustedSuppliers.map((s) => (
+                        <button key={s.id} className="producer-card" type="button" onClick={() => navigate(`/pembeli/toko/${s.id}`)}>
+                          <div className="producer-card__img"></div>
+                          <div className="producer-card__body">
+                            <p className="producer-card__name">{s.name}</p>
+                            <p className="producer-card__loc">{s.city || 'Lokasi tidak diketahui'}</p>
+                            <p className="producer-card__rating"><StarIcon /> {s.rating.toFixed(1)} ({s.productCount}+ produk)</p>
+                            <button className="producer-card__btn" type="button">Lihat Produk</button>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              </>
+            )}
 
           </div>
 

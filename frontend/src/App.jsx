@@ -12,9 +12,21 @@ function isProfilLengkap() {
 
 export default function App() {
   const navigate      = useNavigate()
-  const profilLengkap = isProfilLengkap()
+  const [profilLengkap, setProfilLengkap] = useState(isProfilLengkap())
   const [visible, setVisible]   = useState(false)
   const [dismissed, setDismissed] = useState(false)
+
+  // Cek ulang status profil begitu ada halaman lain yang menyimpan perubahan
+  // (mis. Pengaturan / Lengkapi Profil) — App.jsx tidak reload saat navigasi antar halaman.
+  useEffect(() => {
+    const recheck = () => setProfilLengkap(isProfilLengkap())
+    window.addEventListener('taniku:user-updated', recheck)
+    window.addEventListener('storage', recheck)
+    return () => {
+      window.removeEventListener('taniku:user-updated', recheck)
+      window.removeEventListener('storage', recheck)
+    }
+  }, [])
 
   // Muncul 1.5 detik setelah halaman load
   useEffect(() => {

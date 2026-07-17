@@ -104,6 +104,7 @@ export default function LengkapiProfilPage() {
 
       const storage = localStorage.getItem('token') ? localStorage : sessionStorage
       storage.setItem('user', JSON.stringify(data.user))
+      window.dispatchEvent(new Event('taniku:user-updated'))
 
       navigate('/petani/dashboard')
     } catch {

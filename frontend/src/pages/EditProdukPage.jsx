@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import PageIntro from '../components/layout/PageIntro.jsx'
 import ProdukFormFields from '../components/produk/ProdukFormFields.jsx'
 import { INITIAL_FORM } from '../components/produk/produkFormConfig.js'
@@ -7,43 +7,24 @@ import './TambahProdukPage.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
-function isProfilLengkap() {
-  try {
-    const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}')
-    return !!(user.phone && user.fieldPhotoUrl)
-  } catch { return true }
+function toFormValues(p) {
+  return {
+    ...INITIAL_FORM,
+    namaProduk:    p.name ?? '',
+    harga:         String(p.pricePerKg ?? ''),
+    stok:          String(p.quantityKg ?? ''),
+    tanggalPanen:  p.harvestDate ? p.harvestDate.slice(0, 10) : '',
+    storageMethod: p.storageMethod ?? '',
+    hygienic:      p.hygienic ?? true,
+  }
 }
 
-// Modal: profil belum lengkap
-function ProfilBelumLengkapModal({ onClose, onLengkapi }) {
-  return (
-    <div className="tambah-produk__modal-overlay">
-      <div className="tambah-produk__modal">
-        <div className="tambah-produk__modal-icon">⚠️</div>
-        <h3 className="tambah-produk__modal-title">Profil Belum Lengkap</h3>
-        <p className="tambah-produk__modal-desc">
-          Kamu perlu melengkapi profil toko dulu sebelum bisa menambahkan produk.
-          Minimal isi <strong>nomor HP</strong> dan <strong>foto ladang</strong> agar pembeli
-          bisa menghubungi kamu dan mempercayai keberadaan toko.
-        </p>
-        <div className="tambah-produk__modal-actions">
-          <button type="button" className="tambah-produk__modal-btn-secondary" onClick={onClose}>
-            Nanti saja
-          </button>
-          <button type="button" className="tambah-produk__modal-btn-primary" onClick={onLengkapi}>
-            Lengkapi Profil →
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default function TambahProdukPage() {
+export default function EditProdukPage() {
+  const { id } = useParams()
   const navigate = useNavigate()
-  const [showModal, setShowModal] = useState(!isProfilLengkap())
   const [form, setForm] = useState(INITIAL_FORM)
   const [foto, setFoto] = useState(null)
+  const [fetching, setFetching] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -52,16 +33,30 @@ export default function TambahProdukPage() {
 
   const handleCancel = () => navigate('/petani/produk-saya')
 
+  useEffect(() => {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+    if (!token) { navigate('/login'); return }
+
+    fetch(`${API_URL}/api/products/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.product) setForm(toFormValues(data.product))
+        else setError(data.message || 'Produk tidak ditemukan.')
+      })
+      .catch(() => setError('Tidak dapat terhubung ke server.'))
+      .finally(() => setFetching(false))
+  }, [id])
+
   const handleSubmit = async () => {
     setError('')
 
-    // Validasi field wajib
     if (!form.namaProduk || !form.harga || !form.stok || !form.tanggalPanen || !form.storageMethod) {
       setError('Nama produk, harga, stok, tanggal panen, dan cara simpan wajib diisi.')
       return
     }
 
-    // Tanggal panen tidak boleh di masa depan
     if (new Date(form.tanggalPanen) > new Date()) {
       setError('Tanggal panen tidak boleh di masa depan.')
       return
@@ -71,8 +66,8 @@ export default function TambahProdukPage() {
 
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-      const res = await fetch(`${API_URL}/api/products`, {
-        method: 'POST',
+      const res = await fetch(`${API_URL}/api/products/${id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -90,7 +85,7 @@ export default function TambahProdukPage() {
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.message || 'Gagal menyimpan produk.')
+        setError(data.message || 'Gagal memperbarui produk.')
         setLoading(false)
         return
       }
@@ -102,15 +97,17 @@ export default function TambahProdukPage() {
     }
   }
 
+  if (fetching) {
+    return (
+      <div className="tambah-produk">
+        <PageIntro title="Edit Produk" subtitle="Memuat data produk..." />
+      </div>
+    )
+  }
+
   return (
     <div className="tambah-produk">
-      {showModal && (
-        <ProfilBelumLengkapModal
-          onClose={() => navigate('/petani/dashboard')}
-          onLengkapi={() => navigate('/petani/pengaturan')}
-        />
-      )}
-      <PageIntro title="Tambah Produk" subtitle="Tambahkan produk baru hasil panen anda." />
+      <PageIntro title="Edit Produk" subtitle="Perbarui detail produk kamu." />
 
       <ProdukFormFields
         form={form}
@@ -121,7 +118,7 @@ export default function TambahProdukPage() {
         error={error}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
-        submitLabel={loading ? 'Menyimpan...' : 'Simpan & Prediksi Tier'}
+        submitLabel={loading ? 'Menyimpan...' : 'Simpan Perubahan'}
       />
     </div>
   )

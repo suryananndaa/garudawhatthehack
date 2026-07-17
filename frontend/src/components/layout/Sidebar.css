@@ -69,6 +69,17 @@
   color: #ffffff;
 }
 
+.sidebar__footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar__logout:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+}
+
 @media (max-width: 900px) {
   .sidebar {
     width: 200px;
