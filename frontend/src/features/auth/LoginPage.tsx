@@ -41,7 +41,7 @@ export default function LoginPage() {
       storage.setItem('token', data.token)
       storage.setItem('user', JSON.stringify(data.user))
 
-      navigate(data.user.role === 'petani' ? '/petani/dashboard' : '/dashboard')
+      navigate(data.user.role === 'petani' ? '/petani/dashboard' : '/pembeli/dashboard')
     } catch {
       setError('Tidak dapat terhubung ke server. Pastikan backend sudah berjalan.')
       setLoading(false)

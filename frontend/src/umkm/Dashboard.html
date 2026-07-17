@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taniku — Dashboard Konsumen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand__mark">🌿</span>
+      <span class="brand__name">Tani<span class="brand__accent">ku</span></span>
+    </div>
+
+    <nav class="nav" aria-label="Navigasi utama">
+      <a href="#" class="nav__item nav__item--active">
+        <svg class="nav__icon" viewBox="0 0 24 24" fill="none"><path d="M4 11.5 12 4l8 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 20v-5h4v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Beranda</span>
+      </a>
+      <a href="#" class="nav__item">
+        <svg class="nav__icon" viewBox="0 0 24 24" fill="none"><path d="M7 3h8l3 3v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9h6M9 13h6M9 17h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>Pesanan Saya</span>
+      </a>
+      <a href="#" class="nav__item">
+        <svg class="nav__icon" viewBox="0 0 24 24" fill="none"><path d="M12 20.5s-7.5-4.6-9.6-9A5.2 5.2 0 0 1 12 6.4 5.2 5.2 0 0 1 21.6 11.5c-2.1 4.4-9.6 9-9.6 9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <span>Favorit</span>
+      </a>
+      <a href="#" class="nav__item">
+        <svg class="nav__icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .34 1.87l.06.06a2.06 2.06 0 1 1-2.92 2.92l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V19.6a2.06 2.06 0 1 1-4.12 0v-.09a1.7 1.7 0 0 0-1.11-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2.06 2.06 0 1 1-2.92-2.92l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1.03H4.4a2.06 2.06 0 1 1 0-4.12h.09A1.7 1.7 0 0 0 6.05 6.9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2.06 2.06 0 1 1 2.92-2.92l.06.06a1.7 1.7 0 0 0 1.87.34H10.5a1.7 1.7 0 0 0 1.03-1.56V.4a2.06 2.06 0 1 1 4.12 0v.09c0 .68.4 1.28 1.03 1.56.63.27 1.36.14 1.87-.34l.06-.06a2.06 2.06 0 1 1 2.92 2.92l-.06.06a1.7 1.7 0 0 0-.34 1.87v.09c.27.63.87 1.03 1.56 1.03H23.6a2.06 2.06 0 1 1 0 4.12h-.09a1.7 1.7 0 0 0-1.56 1.03" stroke="currentColor" stroke-width="0"/><path d="M12 2.6v2.2M12 19.2v2.2M4.5 4.5l1.5 1.5M18 18l1.5 1.5M2.6 12h2.2M19.2 12h2.2M4.5 19.5 6 18M18 6l1.5-1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>Pengaturan</span>
+      </a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <div class="promo-card">
+        <p class="promo-card__title">Bergabung jadi<br>Konsumen Premium</p>
+        <p class="promo-card__sub">Dapatkan harga spesial dan rekomendasi terdekat setiap hari.</p>
+        <button class="promo-card__btn" id="upgradeBtn" type="button">Upgrade Sekarang</button>
+      </div>
+      <button class="help-pill" id="helpBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M4 15v-3a8 8 0 0 1 16 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 15a2 2 0 0 1 2-2h1v5H6a2 2 0 0 1-2-2Zm16 0a2 2 0 0 0-2-2h-1v5h1a2 2 0 0 0 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <span>Butuh bantuan?<br><small>Hubungi kami 24/7</small></span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar__greet">
+        <p class="topbar__hi">Selamat Datang,</p>
+        <h1 class="topbar__name">Segar Mania</h1>
+      </div>
+
+      <div class="topbar__search">
+        <input type="text" placeholder="Cari produk segar (tomat, cabai, beras, ikan..)" aria-label="Cari produk">
+        <button type="button" aria-label="Cari">
+          <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><circle cx="11" cy="11" r="6.5" stroke="white" stroke-width="2"/><path d="m20 20-3.4-3.4" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <div class="topbar__actions">
+        <button class="icon-btn" type="button" aria-label="Notifikasi">
+          <svg viewBox="0 0 24 24" fill="none" width="19" height="19"><path d="M6 9a6 6 0 0 1 12 0c0 4.2 1.2 5.6 2 6.5H4c.8-.9 2-2.3 2-6.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <span class="icon-btn__dot"></span>
+        </button>
+        <button class="icon-btn" type="button" aria-label="Keranjang">
+          <svg viewBox="0 0 24 24" fill="none" width="19" height="19"><path d="M4 6h2l1.6 10.2A2 2 0 0 0 9.6 18H18a2 2 0 0 0 2-1.6L21.5 9H6.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="21" r="1.3" fill="currentColor"/><circle cx="18" cy="21" r="1.3" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content grid: left column + right column -->
+    <div class="content">
+
+      <!-- LEFT COLUMN -->
+      <div class="content__left">
+
+        <!-- Hero -->
+        <section class="hero">
+          <div class="hero__text">
+            <h2>Distribusi Cerdas,<br><span>Untung Bersama</span> 🌿</h2>
+            <p>AI kami membantu Anda menemukan produsen terbaik dengan jarak terdekat dan harga paling menguntungkan.</p>
+            <button class="hero__cta" type="button">
+              Pelajari Cara Kerja
+              <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="hero__art" aria-hidden="true">
+            <svg viewBox="0 0 360 210" width="100%" height="100%">
+              <path d="M0 150 Q90 110 180 145 T360 130 V210 H0 Z" fill="#dcefe0"/>
+              <path d="M0 170 Q100 145 200 168 T360 158 V210 H0 Z" fill="#c7e6cd"/>
+              <circle cx="70" cy="70" r="30" fill="#eef6ee"/>
+              <path d="M8 6h30l6 10h44a4 4 0 0 1 4 4v34a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4V10a4 4 0 0 1-4-4Z" transform="translate(210,95)" fill="#f3f0ea" stroke="#c9c2b4" stroke-width="1.5"/>
+              <rect x="222" y="118" width="60" height="30" rx="2" fill="#fbf9f4" stroke="#c9c2b4" stroke-width="1.5"/>
+              <rect x="256" y="70" width="46" height="34" rx="3" fill="#f0f2ea" stroke="#c9c2b4" stroke-width="1.5"/>
+              <rect x="256" y="60" width="46" height="12" rx="2" fill="#c0392b"/>
+              <g stroke="#4c8c5a" stroke-width="2" stroke-dasharray="4 4" fill="none">
+                <path d="M60 90 C120 40 200 40 250 55"/>
+                <path d="M60 90 C90 130 150 150 195 100"/>
+              </g>
+              <circle cx="60" cy="90" r="5" fill="#3f7a4c"/>
+              <circle cx="250" cy="55" r="6" fill="#e05a3b"/>
+              <circle cx="195" cy="100" r="6" fill="#2d6b8f"/>
+              <g transform="translate(46,100)">
+                <ellipse cx="18" cy="66" rx="16" ry="4" fill="#c7e6cd"/>
+                <rect x="6" y="24" width="24" height="30" rx="4" fill="#3f7a4c"/>
+                <circle cx="18" cy="14" r="10" fill="#e8b382"/>
+                <path d="M6 10a12 8 0 0 1 24 0" fill="#caa15a"/>
+                <rect x="-4" y="34" width="26" height="18" rx="3" fill="#7a5230"/>
+              </g>
+              <g transform="translate(130,150)">
+                <rect x="0" y="0" width="90" height="34" rx="3" fill="#eef1e6" stroke="#c9c2b4" stroke-width="1.5"/>
+                <rect x="0" y="-14" width="34" height="14" rx="2" fill="#dfe6d5" stroke="#c9c2b4" stroke-width="1.5"/>
+                <circle cx="16" cy="34" r="6" fill="#3a3a3a"/>
+                <circle cx="72" cy="34" r="6" fill="#3a3a3a"/>
+              </g>
+            </svg>
+          </div>
+        </section>
+
+        <!-- Kategori -->
+        <section class="section">
+          <h3 class="section__title">Jelajahi Kategori</h3>
+          <div class="category-row">
+            <button class="category-card" type="button">
+              <span class="category-card__icon">🥕</span>
+              <span>Sayuran</span>
+            </button>
+            <button class="category-card" type="button">
+              <span class="category-card__icon">🍇</span>
+              <span>Buah</span>
+            </button>
+            <button class="category-card" type="button">
+              <span class="category-card__icon">⋯</span>
+              <span>Lainnya</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Produk Populer -->
+        <section class="section">
+          <div class="section__head">
+            <h3 class="section__title">Produk Populer</h3>
+            <a href="#" class="section__link">Lihat semua</a>
+          </div>
+          <div class="product-row" id="productRow"><!-- filled by JS --></div>
+        </section>
+
+        <!-- Produsen -->
+        <section class="section">
+          <div class="section__head">
+            <h3 class="section__title">Produsen Terpercaya di Sekitar Anda</h3>
+            <a href="#" class="section__link">Lihat semua</a>
+          </div>
+          <div class="producer-row" id="producerRow"><!-- filled by JS --></div>
+        </section>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="content__right">
+
+        <!-- Profile card -->
+        <section class="profile-card">
+          <div class="profile-card__cover">
+            <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=300&h=300&fit=crop" alt="" class="profile-card__avatar">
+            <div class="profile-card__id">
+              <p class="profile-card__name">Segar Mania <svg viewBox="0 0 24 24" width="15" height="15" fill="#2fae60"><path d="M12 2 14.4 4.3 17.6 3.6 18.4 6.8 21.5 8.1 20 11 21.5 13.9 18.4 15.2 17.6 18.4 14.4 17.7 12 20 9.6 17.7 6.4 18.4 5.6 15.2 2.5 13.9 4 11 2.5 8.1 5.6 6.8 6.4 3.6 9.6 4.3Z"/><path d="m8.5 12 2.3 2.3L15.5 9.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></p>
+              <span class="profile-card__tag">Restoran</span>
+            </div>
+          </div>
+          <p class="profile-card__desc">Resto sehat dengan bahan segar pilihan setiap hari.</p>
+
+          <dl class="profile-card__info">
+            <div>
+              <dt><svg viewBox="0 0 24 24" width="15" height="15" fill="none"><path d="M12 21s7-6.4 7-11.5a7 7 0 1 0-14 0C5 14.6 12 21 12 21Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="9.5" r="2.4" stroke="currentColor" stroke-width="1.6"/></svg> Alamat</dt>
+              <dd>Jl. Akasia Tree No. 96, Semarang</dd>
+            </div>
+            <div>
+              <dt><svg viewBox="0 0 24 24" width="15" height="15" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Email</dt>
+              <dd>Segarmaniaresto@gmail.com</dd>
+            </div>
+            <div>
+              <dt><svg viewBox="0 0 24 24" width="15" height="15" fill="none"><path d="M6.6 10.8c1.3 2.6 3.4 4.7 6 6l2-2a1.2 1.2 0 0 1 1.3-.3c1 .3 2.1.5 3.2.5.7 0 1.2.5 1.2 1.2V19a1.2 1.2 0 0 1-1.2 1.2C10.3 20.2 3.8 13.7 3.8 6a1.2 1.2 0 0 1 1.2-1.2h2.8c.7 0 1.2.5 1.2 1.2 0 1.1.2 2.2.5 3.2.1.5 0 1-.3 1.3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg> Telepon</dt>
+              <dd>0895412580657</dd>
+            </div>
+            <div>
+              <dt><svg viewBox="0 0 24 24" width="15" height="15" fill="none"><rect x="3" y="4.5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 9.5h18M8 3v3M16 3v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Member Sejak</dt>
+              <dd>Juli 2026</dd>
+            </div>
+          </dl>
+
+          <button class="profile-card__btn" type="button">
+            Lihat Profile Lengkap
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </section>
+
+        <!-- Tracking -->
+        <section class="tracking-card">
+          <div class="tracking-card__head">
+            <h3>Tracking Pesanan</h3>
+            <a href="#">Lihat semua</a>
+          </div>
+
+          <div class="order-box">
+            <div class="order-box__top">
+              <span class="order-box__id">Order #INV-2507160-0012</span>
+              <span class="order-box__status">Diproses</span>
+            </div>
+            <p class="order-box__desc">Sayuran Segar &amp; Telur Organik</p>
+            <p class="order-box__total">Total: Rp 1.250.000</p>
+            <p class="order-box__time">16 Juli 2025 · 08:45 WIB</p>
+          </div>
+
+          <ol class="timeline" id="timeline">
+            <li class="timeline__step timeline__step--done">
+              <span class="timeline__dot"></span>
+              <div>
+                <p>Pesanan Diterima</p>
+                <span>16 Juli 2025 · 08:45</span>
+              </div>
+            </li>
+            <li class="timeline__step timeline__step--current">
+              <span class="timeline__dot"></span>
+              <div>
+                <p>Sedang Diproses</p>
+                <span>16 Juli 2025 · 09:15</span>
+              </div>
+            </li>
+            <li class="timeline__step">
+              <span class="timeline__dot"></span>
+              <div>
+                <p>Dalam Pengiriman</p>
+                <span>Estimasi: 16 Juli 2025 · 13:00</span>
+              </div>
+            </li>
+            <li class="timeline__step">
+              <span class="timeline__dot"></span>
+              <div>
+                <p>Selesai</p>
+                <span>Estimasi: 16 Juli 2025 · 14:00</span>
+              </div>
+            </li>
+          </ol>
+
+          <button class="tracking-card__btn" id="trackBtn" type="button">Lacak Pesanan Lainnya</button>
+        </section>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
