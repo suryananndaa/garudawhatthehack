@@ -139,9 +139,9 @@ export default function UMKMDashboard() {
             <h1 className="topbar__name">{userName}</h1>
           </div>
 
-          <div className="topbar__search">
-            <input type="text" placeholder="Cari produk segar (tomat, cabai, beras, ikan..)" aria-label="Cari produk" />
-            <button type="button" aria-label="Cari">
+          <div className="topbar__search" style={{ cursor:'pointer' }} onClick={() => navigate('/pembeli/search')}>
+            <input type="text" placeholder="Cari produk segar (tomat, cabai, beras, ikan..)" aria-label="Cari produk" readOnly style={{ cursor:'pointer' }} />
+            <button type="button" aria-label="Cari" onClick={e => { e.stopPropagation(); navigate('/pembeli/search') }}>
               <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
                 <circle cx="11" cy="11" r="6.5" stroke="white" strokeWidth="2"/>
                 <path d="m20 20-3.4-3.4" stroke="white" strokeWidth="2" strokeLinecap="round"/>

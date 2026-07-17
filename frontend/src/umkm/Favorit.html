@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taniku — Favorit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="Favorit.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <div class="logo-row">
+        <div class="logo-mark">🌿</div>
+        <div>
+          <div class="logo-word">Tan<em>iku</em></div>
+          <div class="logo-sub">Dari Petani, Untuk Negeri</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="nav-item" data-page="beranda"><span class="ic"></span><span>Beranda</span></button>
+        <button class="nav-item" data-page="pesanan"><span class="ic"></span><span>Pesanan Saya</span></button>
+        <button class="nav-item active" data-page="favorit"><span class="ic"></span><span>Favorit</span></button>
+        <button class="nav-item" data-page="pengaturan"><span class="ic"></span><span>Pengaturan</span></button>
+      </nav>
+      <div class="sb-spacer"></div>
+      <div class="promo-card">
+        <p class="promo-eyebrow">Bergabung sekarang</p>
+        <h4>Beli Lokal, Dukung Petani Indonesia</h4>
+        <p>Setiap pembelianmu membantu petani lokal berkembang.</p>
+        <button class="promo-btn">Pelajari Lebih →</button>
+        <span class="promo-illo">👨‍🌾</span>
+      </div>
+      <div class="help-row">
+        <div class="help-ic">🎧</div>
+        <div><p>Butuh Bantuan?</p><small>Chat kami 24/7</small></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="search-wrap" id="searchWrap">
+        <svg viewBox="0 0 24 24" fill="none" width="15" height="15" stroke="#7E8C74" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="text" id="globalSearch" placeholder="Cari sayur, buah, beras, ikan...">
+        <button class="s-go" id="sGo">
+          <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <div class="tb-actions">
+        <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" width="17" height="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge">2</span></button>
+        <div class="profile-chip"><div class="p-av">🧑</div><div><div class="p-name">Segar Mania</div><div class="p-role">Business</div></div></div>
+      </div>
+    </header>
+
+    <!-- PAGE FAVORIT -->
+    <div class="page-content">
+      <div class="fav-header">
+        <div class="fav-title-wrap">
+          <p class="eyebrow">Koleksi saya</p>
+          <h1>Favorit <span class="fav-leaf">🍃</span></h1>
+          <p class="fav-desc">Produk pilihan yang kamu simpan dari petani terbaik.</p>
+        </div>
+        <div class="stats-row">
+          <div class="stat-cell"><span class="stat-lbl">Total</span><span class="stat-val" id="statTotal">0</span></div>
+          <div class="stat-cell"><span class="stat-lbl">Sayur</span><span class="stat-val" id="statSayur">0</span></div>
+          <div class="stat-cell"><span class="stat-lbl">Buah</span><span class="stat-val" id="statBuah">0</span></div>
+        </div>
+      </div>
+
+      <div class="fav-filters">
+        <button class="fav-pill on" data-fcat="Semua">🌿 Semua</button>
+        <button class="fav-pill" data-fcat="Sayuran">🥬 Sayuran</button>
+        <button class="fav-pill" data-fcat="Buah">🍊 Buah</button>
+        <button class="fav-pill" data-fcat="Cabai">🌶️ Cabai</button>
+        <div class="fav-gap"></div>
+        <select class="fav-sort" id="favSort">
+          <option value="newest">Terbaru</option>
+          <option value="price-asc">Harga Terendah</option>
+          <option value="price-desc">Harga Tertinggi</option>
+          <option value="name-az">Nama A–Z</option>
+          <option value="rating-desc">Rating Tertinggi</option>
+        </select>
+        <button class="del-all-btn" id="delAllBtn" disabled>🗑 Hapus Semua</button>
+      </div>
+
+      <p class="result-hint" id="favHint"></p>
+      <div class="fav-grid" id="favGrid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="Favorit.js"></script>
+</body>
+</html>

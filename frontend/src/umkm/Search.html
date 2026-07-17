@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taniku — Cari Produk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="Search.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <div class="logo-row">
+        <div class="logo-mark">🌿</div>
+        <div>
+          <div class="logo-word">Tan<em>iku</em></div>
+          <div class="logo-sub">Dari Petani, Untuk Negeri</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="nav-item" data-page="beranda"><span class="ic"></span><span>Beranda</span></button>
+        <button class="nav-item" data-page="pesanan"><span class="ic"></span><span>Pesanan Saya</span></button>
+        <button class="nav-item" data-page="favorit"><span class="ic"></span><span>Favorit</span></button>
+        <button class="nav-item" data-page="pengaturan"><span class="ic"></span><span>Pengaturan</span></button>
+      </nav>
+      <div class="sb-spacer"></div>
+      <div class="promo-card">
+        <p class="promo-eyebrow">Bergabung sekarang</p>
+        <h4>Beli Lokal, Dukung Petani Indonesia</h4>
+        <p>Setiap pembelianmu membantu petani lokal berkembang.</p>
+        <button class="promo-btn">Pelajari Lebih →</button>
+        <span class="promo-illo">👨‍🌾</span>
+      </div>
+      <div class="help-row">
+        <div class="help-ic">🎧</div>
+        <div><p>Butuh Bantuan?</p><small>Chat kami 24/7</small></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="search-wrap active" id="searchWrap">
+        <svg viewBox="0 0 24 24" fill="none" width="15" height="15" stroke="#7E8C74" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="text" id="globalSearch" placeholder="Cari sayur, buah, beras, ikan..." autofocus>
+        <button class="s-clear" id="sClear">✕</button>
+        <button class="s-go" id="sGo">
+          <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <div class="tb-actions">
+        <button class="loc-btn">
+          <svg viewBox="0 0 24 24" fill="none" width="13" height="13" stroke="#1A7D3E" stroke-width="2" stroke-linecap="round"><path d="M12 21c-4-4-7-7.5-7-10.5a7 7 0 0 1 14 0c0 3-3 6.5-7 10.5Z"/><circle cx="12" cy="10.5" r="2.5"/></svg>
+          <span>Kota Bandung ▾</span>
+        </button>
+        <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" width="17" height="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge">2</span></button>
+        <div class="profile-chip"><div class="p-av">🧑</div><div><div class="p-name">Segar Mania</div><div class="p-role">Business</div></div></div>
+      </div>
+    </header>
+
+    <!-- SEARCH LAYOUT -->
+    <div class="search-layout">
+
+      <!-- FILTER PANEL -->
+      <aside class="filter-panel" id="filterPanel">
+        <div class="fp-head"><h3>🎛 Saring Produk</h3><button class="clear-link" id="clearFilters">Clear</button></div>
+        <div class="fp-section">
+          <div class="fp-label" data-toggle="lokasi">Lokasi Pengiriman <span class="chev">▾</span></div>
+          <div class="fp-body" id="fb-lokasi">
+            <div class="range-labels"><span>Radius Maks.</span><span id="radiusVal">100 km</span></div>
+            <input type="range" id="radiusSlider" min="10" max="200" value="100" step="10">
+          </div>
+        </div>
+        <div class="fp-section">
+          <div class="fp-label" data-toggle="kualitas">Kualitas <span class="chev">▾</span></div>
+          <div class="fp-body" id="fb-kualitas">
+            <div class="f-chips">
+              <button class="f-chip on" data-q="Terbaik">✓ Terbaik</button>
+              <button class="f-chip" data-q="Standar">Standar</button>
+              <button class="f-chip" data-q="Ekonomis">Ekonomis</button>
+            </div>
+          </div>
+        </div>
+        <div class="fp-section">
+          <div class="fp-label" data-toggle="harga">Harga per kg <span class="chev">▾</span></div>
+          <div class="fp-body" id="fb-harga">
+            <div class="range-labels"><span id="priceMinLbl">Rp5.000</span><span>—</span><span id="priceMaxLbl">Rp80.000</span></div>
+            <input type="range" id="priceMinR" min="5000" max="80000" value="5000" step="1000">
+            <input type="range" id="priceMaxR" min="5000" max="80000" value="80000" step="1000">
+          </div>
+        </div>
+        <div class="fp-section">
+          <div class="fp-label" data-toggle="sertif">Sertifikasi <span class="chev">▾</span></div>
+          <div class="fp-body" id="fb-sertif">
+            <label class="chk-item"><input type="checkbox" id="chkOrg"> Organik</label>
+            <label class="chk-item"><input type="checkbox" id="chkPest"> Pesticide Safe</label>
+            <label class="chk-item"><input type="checkbox" id="chkFresh"> Fresh</label>
+          </div>
+        </div>
+        <button class="fp-apply" id="applyFilter">Terapkan Filter</button>
+        <button class="fp-save">📌 Simpan Filter</button>
+      </aside>
+
+      <!-- SEARCH MAIN -->
+      <div class="search-main">
+        <div class="cat-bar" id="catBar">
+          <button class="cat-btn on" data-cat="Semua"><span class="cat-ic">⊞</span><span>Semua</span></button>
+          <button class="cat-btn" data-cat="Sayuran"><span class="cat-ic">🥬</span><span>Sayuran</span></button>
+          <button class="cat-btn" data-cat="Buah"><span class="cat-ic">🍊</span><span>Buah</span></button>
+          <button class="cat-btn" data-cat="Cabai"><span class="cat-ic">🌶️</span><span>Cabai</span></button>
+          <button class="cat-btn" data-cat="Bawang"><span class="cat-ic">🧅</span><span>Bawang</span></button>
+          <button class="cat-btn" data-cat="Daging"><span class="cat-ic">🥩</span><span>Daging</span></button>
+          <button class="cat-btn" data-cat="Ikan"><span class="cat-ic">🐟</span><span>Ikan</span></button>
+          <button class="cat-btn" data-cat="Telur"><span class="cat-ic">🥚</span><span>Telur</span></button>
+          <button class="cat-btn" data-cat="Beras"><span class="cat-ic">🌾</span><span>Beras</span></button>
+        </div>
+        <div class="ai-banner">
+          <span style="font-size:22px">✨</span>
+          <div>
+            <strong>Rekomendasi AI: Pilihan terbaik untuk Anda</strong>
+            <div class="ai-tags">
+              <span class="ai-tag">✓ Kualitas Terbaik</span>
+              <span class="ai-tag">✓ Jarak Terdekat</span>
+              <span class="ai-tag">✓ Harga Kompetitif</span>
+            </div>
+          </div>
+        </div>
+        <div class="result-head">
+          <div>
+            <div class="result-title">Hasil untuk <em id="queryLabel">"Semua Produk"</em></div>
+            <div class="result-count" id="resultCount">0 produk</div>
+          </div>
+          <div class="result-right">
+            <select class="sort-sel" id="sortSel">
+              <option value="ai">Rekomendasi AI</option>
+              <option value="rating-desc">Rating Tertinggi</option>
+              <option value="price-asc">Harga Terendah</option>
+              <option value="price-desc">Harga Tertinggi</option>
+              <option value="dist-asc">Jarak Terdekat</option>
+              <option value="name-az">Nama A–Z</option>
+            </select>
+            <div class="view-btns">
+              <button class="vbtn on" id="gViewBtn"><svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
+              <button class="vbtn" id="lViewBtn"><svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button>
+            </div>
+          </div>
+        </div>
+        <div class="prod-grid" id="searchGrid"></div>
+        <div class="s-empty" id="searchEmpty" style="display:none">
+          <div class="illo">🔍</div>
+          <h3>Tidak ada yang cocok</h3>
+          <p>Coba ubah kata kunci atau reset filter.</p>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <aside class="rp">
+        <div class="rp-sec">
+          <div class="rp-ttl">📋 Ringkasan Pilihan</div>
+          <div class="rp-row"><span class="rp-k">Produk</span><span class="rp-v" id="rpProduk">Semua</span></div>
+          <div class="rp-row"><span class="rp-k">Kualitas</span><span class="rp-v">Terbaik</span></div>
+          <div class="rp-row"><span class="rp-k">Lokasi</span><span class="rp-v">Bandung (≤100 km)</span></div>
+        </div>
+        <div class="rp-sec">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div class="rp-ttl" style="margin-bottom:0">🛒 Keranjang (<span id="rpCartCount">0</span>)</div>
+          </div>
+          <div id="rpCartItems"></div>
+          <div class="cart-total-row">
+            <span class="cart-total-lbl">Total Estimasi</span>
+            <span class="cart-total-val" id="rpCartTotal">Rp 0</span>
+          </div>
+          <button class="checkout-btn" id="checkoutBtn">🛒 Lanjut ke Checkout →</button>
+        </div>
+      </aside>
+
+    </div><!-- /search-layout -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+<script src="Search.js"></script>
+</body>
+</html>
