@@ -18,6 +18,9 @@ import JelajahiPage from './umkm/JelajahiPage.jsx'
 import ProfileTokoPage from './umkm/ProfileTokoPage.jsx'
 import DetailProdukPage from './umkm/DetailProdukPage.jsx'
 import PesananSaya from './umkm/Pesanan.jsx'
+import Pengaturan from './umkm/Pengaturan.jsx'
+import FavoritPage from './umkm/Favorit.jsx'
+import SearchPage from './umkm/Search.jsx'
 import './index.css'
 
 function isLoggedIn() {
@@ -51,11 +54,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </Route>
 
         {/* ===== PEMBELI / UMKM ===== */}
-        <Route path="/pembeli/dashboard" element={<PrivateRoute><UMKMDashboard /></PrivateRoute>} />
-        <Route path="/pembeli/pesanan"   element={<PrivateRoute><PesananSaya /></PrivateRoute>} />
+        <Route path="/pembeli/dashboard"   element={<PrivateRoute><UMKMDashboard /></PrivateRoute>} />
+        <Route path="/pembeli/pesanan"     element={<PrivateRoute><PesananSaya /></PrivateRoute>} />
         <Route path="/pembeli/jelajahi/:category" element={<PrivateRoute><JelajahiPage /></PrivateRoute>} />
-        <Route path="/pembeli/toko/:id" element={<PrivateRoute><ProfileTokoPage /></PrivateRoute>} />
-        <Route path="/pembeli/produk/:id" element={<PrivateRoute><DetailProdukPage /></PrivateRoute>} />
+        <Route path="/pembeli/toko/:id"    element={<PrivateRoute><ProfileTokoPage /></PrivateRoute>} />
+        <Route path="/pembeli/produk/:id"  element={<PrivateRoute><DetailProdukPage /></PrivateRoute>} />
+        <Route path="/pembeli/pengaturan"  element={<PrivateRoute><Pengaturan /></PrivateRoute>} />
+        <Route path="/pembeli/favorit"     element={<PrivateRoute><FavoritPage /></PrivateRoute>} />
+        <Route path="/pembeli/search"      element={<PrivateRoute><SearchPage /></PrivateRoute>} />
         <Route path="/pembeli" element={<Navigate to="/pembeli/dashboard" replace />} />
       </Routes>
     </BrowserRouter>

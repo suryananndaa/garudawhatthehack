@@ -542,9 +542,9 @@ export default function PesananSaya() {
       {/* ===== MAIN ===== */}
       <main className="main">
         <header className="topbar">
-          <div className="topbar__search">
-            <input type="text" placeholder="Cari produk segar (tomat, cabai, beras, ikan..)" />
-            <button type="button" aria-label="Cari"><IconSearch /></button>
+          <div className="topbar__search" style={{ cursor:'pointer' }} onClick={() => navigate('/pembeli/search')}>
+            <input type="text" placeholder="Cari produk segar (tomat, cabai, beras, ikan..)" readOnly style={{ cursor:'pointer' }} />
+            <button type="button" aria-label="Cari" onClick={e => { e.stopPropagation(); navigate('/pembeli/search') }}><IconSearch /></button>
           </div>
           <div className="topbar__actions" ref={actionsRef}>
             <div className="dropdown-anchor">
