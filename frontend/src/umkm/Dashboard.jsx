@@ -26,6 +26,13 @@ const INITIAL_CART = [
 function formatRupiah(n) { return 'Rp ' + n.toLocaleString('id-ID') }
 
 // ============ HELPERS ============
+function StarIcon() {
+  return (
+    <svg className="star" viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+      <path d="M12 2.5l2.9 6.1 6.6.7-4.9 4.6 1.3 6.6L12 17l-5.9 3.5 1.3-6.6L2.5 9.3l6.6-.7Z" />
+    </svg>
+  )
+}
 function IconBell(p) {
   return (
     <svg viewBox="0 0 24 24" fill="none" width="19" height="19" {...p}>

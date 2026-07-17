@@ -52,7 +52,7 @@ export default function ProdukTable({ products, onEdit, onMore }) {
           </thead>
           <tbody>
             {products.map((product) => (
-              <tr key={product.name}>
+              <tr key={product.id}>
                 <td>
                   <div className="produk-table__product">
                     <span className="produk-table__emoji" aria-hidden="true">{product.emoji}</span>
