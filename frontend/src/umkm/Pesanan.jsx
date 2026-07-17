@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import './Pesanan.css'
 
@@ -23,6 +23,9 @@ const IconStar    = ({ filled, ...p }) => <svg viewBox="0 0 24 24" width="26" he
 const IconCheck   = (p) => <svg viewBox="0 0 24 24" fill="none" width="26" height="26" {...p}><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.7"/><path d="m8 12.3 2.6 2.6L16 9.5" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/></svg>
 const IconAlert   = (p) => <svg viewBox="0 0 24 24" fill="none" width="26" height="26" {...p}><path d="M12 9v4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><circle cx="12" cy="16.7" r="1" fill="currentColor"/><path d="M10.3 3.7 2.7 17a1.7 1.7 0 0 0 1.5 2.6h15.6a1.7 1.7 0 0 0 1.5-2.6L13.7 3.7a1.7 1.7 0 0 0-3.4 0Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/></svg>
 const IconLogout  = (p) => <svg viewBox="0 0 24 24" fill="none" className="nav__icon" {...p}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/><polyline points="16 17 21 12 16 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/><line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
+const IconOrderNotif = (p) => <svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}><path d="M7 3h8l3 3v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/><path d="M9 9h6M9 13h6M9 17h3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>
+const IconPromoNotif = (p) => <svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}><path d="M20 12 12 20l-9-9V4h7l9 9Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/><circle cx="7.5" cy="7.5" r="1.4" fill="currentColor"/></svg>
+const IconSystemNotif = (p) => <svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.7"/><path d="M12 8v5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/><circle cx="12" cy="15.8" r="0.9" fill="currentColor"/></svg>
 
 /* ============================================================
    DATA
@@ -35,6 +38,19 @@ const INITIAL_ORDERS = [
 ]
 
 const FILTERS = ['Semua','Diproses','Dibatalkan','Selesai','Dikirim']
+
+const INITIAL_NOTIFICATIONS = [
+  { id: 1, type: 'order',  title: 'Pesanan sedang diproses', desc: 'Pesanan #TMAK-20389 sedang disiapkan oleh Bhumi Jaya Kusuma.', time: '10 menit lalu', unread: true },
+  { id: 2, type: 'promo',  title: 'Diskon 20% Sayuran Segar', desc: 'Khusus hari ini, nikmati potongan harga untuk kategori sayuran.', time: '2 jam lalu', unread: true },
+  { id: 3, type: 'order',  title: 'Pesanan telah dikirim', desc: 'Pesanan #TMAK-20388 sedang dalam perjalanan ke alamat Anda.', time: 'Kemarin', unread: true },
+  { id: 4, type: 'system', title: 'Profil berhasil diperbarui', desc: 'Perubahan data akun Anda telah tersimpan.', time: '2 hari lalu', unread: false },
+]
+
+const INITIAL_CART = [
+  { id: 1, name: 'Tomat Keriting', meta: 'Segar · Bandung', unit: 'kg', price: 12000, qty: 2 },
+  { id: 2, name: 'Cabai Rawit Merah', meta: 'Pedas · Garut', unit: 'kg', price: 28000, qty: 1 },
+  { id: 3, name: 'Telur Ayam Organik', meta: 'Segar · Lembang', unit: '10 butir', price: 24000, qty: 1 },
+]
 
 function formatRupiah(n) { return 'Rp ' + n.toLocaleString('id-ID') }
 
@@ -319,6 +335,98 @@ function Toast({ message, onDone }) {
 }
 
 /* ============================================================
+   NOTIFICATION & CART DROPDOWNS
+   ============================================================ */
+function NotificationPanel({ notifications, onMarkAllRead, onItemClick }) {
+  return (
+    <div className="dropdown-panel" role="menu" aria-label="Notifikasi">
+      <div className="dropdown-panel__head">
+        <h4>Notifikasi</h4>
+        {notifications.some(n => n.unread) && (
+          <button className="dropdown-panel__markall" type="button" onClick={onMarkAllRead}>
+            Tandai semua dibaca
+          </button>
+        )}
+      </div>
+      {notifications.length === 0 ? (
+        <p className="dropdown-panel__empty">Belum ada notifikasi.</p>
+      ) : (
+        <ul className="dropdown-panel__list">
+          {notifications.map(n => (
+            <li
+              key={n.id}
+              className={`notif-item notif-item--${n.type}`}
+              onClick={() => onItemClick(n.id)}
+            >
+              <span className="notif-item__icon">
+                {n.type === 'order' && <IconOrderNotif />}
+                {n.type === 'promo' && <IconPromoNotif />}
+                {n.type === 'system' && <IconSystemNotif />}
+              </span>
+              <div className="notif-item__body">
+                <p className="notif-item__title">
+                  {n.title}
+                  {n.unread && <span className="notif-item__unread-dot" />}
+                </p>
+                <p className="notif-item__desc">{n.desc}</p>
+                <span className="notif-item__time">{n.time}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="dropdown-panel__foot">
+        <a href="#">Lihat semua notifikasi</a>
+      </div>
+    </div>
+  )
+}
+
+function CartPanel({ items, onIncrease, onDecrease, onRemove }) {
+  const total = items.reduce((sum, it) => sum + it.price * it.qty, 0)
+  return (
+    <div className="dropdown-panel" role="menu" aria-label="Keranjang">
+      <div className="dropdown-panel__head">
+        <h4>Keranjang ({items.reduce((n, it) => n + it.qty, 0)})</h4>
+      </div>
+      {items.length === 0 ? (
+        <p className="dropdown-panel__empty">Keranjang Anda masih kosong.</p>
+      ) : (
+        <ul className="dropdown-panel__list">
+          {items.map(it => (
+            <li key={it.id} className="cart-item">
+              <div className="cart-item__img" />
+              <div className="cart-item__body">
+                <p className="cart-item__name">{it.name}</p>
+                <p className="cart-item__meta">{it.meta}</p>
+                <p className="cart-item__price">{formatRupiah(it.price)}/{it.unit}</p>
+              </div>
+              <div className="cart-item__qty">
+                <button type="button" aria-label="Kurangi" onClick={() => onDecrease(it.id)}>−</button>
+                <span>{it.qty}</span>
+                <button type="button" aria-label="Tambah" onClick={() => onIncrease(it.id)}>+</button>
+              </div>
+              <button className="cart-item__remove" type="button" aria-label="Hapus" onClick={() => onRemove(it.id)}>
+                <IconClose />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {items.length > 0 && (
+        <div className="dropdown-panel__summary">
+          <div className="dropdown-panel__summary-row">
+            <span>Subtotal</span>
+            <strong>{formatRupiah(total)}</strong>
+          </div>
+          <button className="dropdown-panel__checkout" type="button">Checkout</button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ============================================================
    MAIN PAGE — proper React component, no ReactDOM.createRoot
    ============================================================ */
 export default function PesananSaya() {
@@ -331,6 +439,52 @@ export default function PesananSaya() {
   const [filter, setFilter] = useState('Semua')
   const [modal, setModal] = useState({ type: null, order: null })
   const [toast, setToast] = useState(null)
+
+  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS)
+  const [cartItems, setCartItems] = useState(INITIAL_CART)
+  const [openPanel, setOpenPanel] = useState(null) // null | 'notif' | 'cart'
+  const actionsRef = useRef(null)
+
+  useEffect(() => {
+    function handleOutside(e) {
+      if (actionsRef.current && !actionsRef.current.contains(e.target)) {
+        setOpenPanel(null)
+      }
+    }
+    function handleEscape(e) {
+      if (e.key === 'Escape') setOpenPanel(null)
+    }
+    document.addEventListener('mousedown', handleOutside)
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.removeEventListener('mousedown', handleOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [])
+
+  const unreadCount = notifications.filter(n => n.unread).length
+  const cartCount = cartItems.reduce((n, it) => n + it.qty, 0)
+
+  function togglePanel(name) {
+    setOpenPanel(prev => (prev === name ? null : name))
+  }
+  function markAllRead() {
+    setNotifications(prev => prev.map(n => ({ ...n, unread: false })))
+  }
+  function markOneRead(id) {
+    setNotifications(prev => prev.map(n => (n.id === id ? { ...n, unread: false } : n)))
+  }
+  function increaseQty(id) {
+    setCartItems(prev => prev.map(it => (it.id === id ? { ...it, qty: it.qty + 1 } : it)))
+  }
+  function decreaseQty(id) {
+    setCartItems(prev => prev
+      .map(it => (it.id === id ? { ...it, qty: it.qty - 1 } : it))
+      .filter(it => it.qty > 0))
+  }
+  function removeItem(id) {
+    setCartItems(prev => prev.filter(it => it.id !== id))
+  }
 
   const filtered = filter === 'Semua' ? orders : orders.filter(o => o.status === filter)
   const closeModal = () => setModal({ type: null, order: null })
@@ -392,9 +546,44 @@ export default function PesananSaya() {
             <input type="text" placeholder="Cari produk segar (tomat, cabai, beras, ikan..)" />
             <button type="button" aria-label="Cari"><IconSearch /></button>
           </div>
-          <div className="topbar__actions">
-            <button className="icon-btn" aria-label="Notifikasi"><IconBell /><span className="icon-btn__dot" /></button>
-            <button className="icon-btn" aria-label="Keranjang"><IconCart /></button>
+          <div className="topbar__actions" ref={actionsRef}>
+            <div className="dropdown-anchor">
+              <button
+                className={`icon-btn${openPanel === 'notif' ? ' is-open' : ''}`}
+                aria-label="Notifikasi"
+                aria-expanded={openPanel === 'notif'}
+                onClick={() => togglePanel('notif')}
+              >
+                <IconBell />
+                {unreadCount > 0 && <span className="icon-btn__dot" />}
+              </button>
+              {openPanel === 'notif' && (
+                <NotificationPanel
+                  notifications={notifications}
+                  onMarkAllRead={markAllRead}
+                  onItemClick={markOneRead}
+                />
+              )}
+            </div>
+            <div className="dropdown-anchor">
+              <button
+                className={`icon-btn${openPanel === 'cart' ? ' is-open' : ''}`}
+                aria-label="Keranjang"
+                aria-expanded={openPanel === 'cart'}
+                onClick={() => togglePanel('cart')}
+              >
+                <IconCart />
+                {cartCount > 0 && <span className="icon-btn__count">{cartCount}</span>}
+              </button>
+              {openPanel === 'cart' && (
+                <CartPanel
+                  items={cartItems}
+                  onIncrease={increaseQty}
+                  onDecrease={decreaseQty}
+                  onRemove={removeItem}
+                />
+              )}
+            </div>
             <button className="profile-chip">
               <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=100&h=100&fit=crop" alt="" />
               <span>{userName}</span>

@@ -1,8 +1,24 @@
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { NavLink } from 'react-router-dom'
 import './Dashboard.css'
 
 // ============ DATA ============
+const INITIAL_NOTIFICATIONS = [
+  { id: 1, type: 'order',  title: 'Pesanan sedang diproses', desc: 'Pesanan #INV-2507160-0012 sedang disiapkan oleh produsen.', time: '10 menit lalu', unread: true },
+  { id: 2, type: 'promo',  title: 'Diskon 20% Sayuran Segar', desc: 'Khusus hari ini, nikmati potongan harga untuk kategori sayuran.', time: '2 jam lalu', unread: true },
+  { id: 3, type: 'order',  title: 'Pesanan telah dikirim', desc: 'Pesanan #INV-2507150-0098 sedang dalam perjalanan ke alamat Anda.', time: 'Kemarin', unread: true },
+  { id: 4, type: 'system', title: 'Profil berhasil diperbarui', desc: 'Perubahan data akun Anda telah tersimpan.', time: '2 hari lalu', unread: false },
+]
+
+const INITIAL_CART = [
+  { id: 1, name: 'Tomat Keriting', meta: 'Segar · Bandung', unit: 'kg', price: 12000, qty: 2 },
+  { id: 2, name: 'Cabai Rawit Merah', meta: 'Pedas · Garut', unit: 'kg', price: 28000, qty: 1 },
+  { id: 3, name: 'Telur Ayam Organik', meta: 'Segar · Lembang', unit: '10 butir', price: 24000, qty: 1 },
+]
+
+function formatRupiah(n) { return 'Rp ' + n.toLocaleString('id-ID') }
+
 const products = [
   { name: "Tomat Keriting", meta: "Segar · Bandung", price: "Rp 12.000/kg", rating: "4.8", count: "120+" },
   { name: "Tomat Keriting", meta: "Segar · Bandung", price: "Rp 12.000/kg", rating: "4.8", count: "120+" },
@@ -40,6 +56,138 @@ function ProductCard({ product }) {
   )
 }
 
+function IconBell(p) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" width="19" height="19" {...p}>
+      <path d="M6 9a6 6 0 0 1 12 0c0 4.2 1.2 5.6 2 6.5H4c.8-.9 2-2.3 2-6.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/>
+      <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
+    </svg>
+  )
+}
+function IconCart(p) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" width="19" height="19" {...p}>
+      <path d="M4 6h2l1.6 10.2A2 2 0 0 0 9.6 18H18a2 2 0 0 0 2-1.6L21.5 9H6.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="10" cy="21" r="1.3" fill="currentColor"/>
+      <circle cx="18" cy="21" r="1.3" fill="currentColor"/>
+    </svg>
+  )
+}
+function IconOrderNotif(p) {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}>
+      <path d="M7 3h8l3 3v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/>
+      <path d="M9 9h6M9 13h6M9 17h3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
+    </svg>
+  )
+}
+function IconPromoNotif(p) {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}>
+      <path d="M20 12 12 20l-9-9V4h7l9 9Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/>
+      <circle cx="7.5" cy="7.5" r="1.4" fill="currentColor"/>
+    </svg>
+  )
+}
+function IconSystemNotif(p) {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}>
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.7"/>
+      <path d="M12 8v5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
+      <circle cx="12" cy="15.8" r="0.9" fill="currentColor"/>
+    </svg>
+  )
+}
+
+function NotificationPanel({ notifications, onMarkAllRead, onItemClick }) {
+  return (
+    <div className="dropdown-panel" role="menu" aria-label="Notifikasi">
+      <div className="dropdown-panel__head">
+        <h4>Notifikasi</h4>
+        {notifications.some(n => n.unread) && (
+          <button className="dropdown-panel__markall" type="button" onClick={onMarkAllRead}>
+            Tandai semua dibaca
+          </button>
+        )}
+      </div>
+      {notifications.length === 0 ? (
+        <p className="dropdown-panel__empty">Belum ada notifikasi.</p>
+      ) : (
+        <ul className="dropdown-panel__list">
+          {notifications.map(n => (
+            <li
+              key={n.id}
+              className={`notif-item notif-item--${n.type}`}
+              onClick={() => onItemClick(n.id)}
+            >
+              <span className="notif-item__icon">
+                {n.type === 'order' && <IconOrderNotif />}
+                {n.type === 'promo' && <IconPromoNotif />}
+                {n.type === 'system' && <IconSystemNotif />}
+              </span>
+              <div className="notif-item__body">
+                <p className="notif-item__title">
+                  {n.title}
+                  {n.unread && <span className="notif-item__unread-dot" />}
+                </p>
+                <p className="notif-item__desc">{n.desc}</p>
+                <span className="notif-item__time">{n.time}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="dropdown-panel__foot">
+        <a href="#">Lihat semua notifikasi</a>
+      </div>
+    </div>
+  )
+}
+
+function CartPanel({ items, onIncrease, onDecrease, onRemove }) {
+  const total = items.reduce((sum, it) => sum + it.price * it.qty, 0)
+  return (
+    <div className="dropdown-panel" role="menu" aria-label="Keranjang">
+      <div className="dropdown-panel__head">
+        <h4>Keranjang ({items.reduce((n, it) => n + it.qty, 0)})</h4>
+      </div>
+      {items.length === 0 ? (
+        <p className="dropdown-panel__empty">Keranjang Anda masih kosong.</p>
+      ) : (
+        <ul className="dropdown-panel__list">
+          {items.map(it => (
+            <li key={it.id} className="cart-item">
+              <div className="cart-item__img" />
+              <div className="cart-item__body">
+                <p className="cart-item__name">{it.name}</p>
+                <p className="cart-item__meta">{it.meta}</p>
+                <p className="cart-item__price">{formatRupiah(it.price)}/{it.unit}</p>
+              </div>
+              <div className="cart-item__qty">
+                <button type="button" aria-label="Kurangi" onClick={() => onDecrease(it.id)}>−</button>
+                <span>{it.qty}</span>
+                <button type="button" aria-label="Tambah" onClick={() => onIncrease(it.id)}>+</button>
+              </div>
+              <button className="cart-item__remove" type="button" aria-label="Hapus" onClick={() => onRemove(it.id)}>
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none"><path d="M5 5l14 14M19 5 5 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {items.length > 0 && (
+        <div className="dropdown-panel__summary">
+          <div className="dropdown-panel__summary-row">
+            <span>Subtotal</span>
+            <strong>{formatRupiah(total)}</strong>
+          </div>
+          <button className="dropdown-panel__checkout" type="button">Checkout</button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ProducerCard({ producer }) {
   return (
     <div className="producer-card">
@@ -62,6 +210,52 @@ export default function UMKMDashboard() {
   const rawUser = localStorage.getItem('user') || sessionStorage.getItem('user')
   const user = rawUser ? JSON.parse(rawUser) : null
   const userName = user?.name || user?.email || 'Konsumen'
+
+  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS)
+  const [cartItems, setCartItems] = useState(INITIAL_CART)
+  const [openPanel, setOpenPanel] = useState(null) // null | 'notif' | 'cart'
+  const actionsRef = useRef(null)
+
+  useEffect(() => {
+    function handleOutside(e) {
+      if (actionsRef.current && !actionsRef.current.contains(e.target)) {
+        setOpenPanel(null)
+      }
+    }
+    function handleEscape(e) {
+      if (e.key === 'Escape') setOpenPanel(null)
+    }
+    document.addEventListener('mousedown', handleOutside)
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.removeEventListener('mousedown', handleOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [])
+
+  const unreadCount = notifications.filter(n => n.unread).length
+  const cartCount = cartItems.reduce((n, it) => n + it.qty, 0)
+
+  function togglePanel(name) {
+    setOpenPanel(prev => (prev === name ? null : name))
+  }
+  function markAllRead() {
+    setNotifications(prev => prev.map(n => ({ ...n, unread: false })))
+  }
+  function markOneRead(id) {
+    setNotifications(prev => prev.map(n => (n.id === id ? { ...n, unread: false } : n)))
+  }
+  function increaseQty(id) {
+    setCartItems(prev => prev.map(it => (it.id === id ? { ...it, qty: it.qty + 1 } : it)))
+  }
+  function decreaseQty(id) {
+    setCartItems(prev => prev
+      .map(it => (it.id === id ? { ...it, qty: it.qty - 1 } : it))
+      .filter(it => it.qty > 0))
+  }
+  function removeItem(id) {
+    setCartItems(prev => prev.filter(it => it.id !== id))
+  }
 
   function handleLogout() {
     localStorage.removeItem('token')
@@ -149,21 +343,46 @@ export default function UMKMDashboard() {
             </button>
           </div>
 
-          <div className="topbar__actions">
-            <button className="icon-btn" type="button" aria-label="Notifikasi">
-              <svg viewBox="0 0 24 24" fill="none" width="19" height="19">
-                <path d="M6 9a6 6 0 0 1 12 0c0 4.2 1.2 5.6 2 6.5H4c.8-.9 2-2.3 2-6.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/>
-                <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
-              </svg>
-              <span className="icon-btn__dot" />
-            </button>
-            <button className="icon-btn" type="button" aria-label="Keranjang">
-              <svg viewBox="0 0 24 24" fill="none" width="19" height="19">
-                <path d="M4 6h2l1.6 10.2A2 2 0 0 0 9.6 18H18a2 2 0 0 0 2-1.6L21.5 9H6.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="10" cy="21" r="1.3" fill="currentColor"/>
-                <circle cx="18" cy="21" r="1.3" fill="currentColor"/>
-              </svg>
-            </button>
+          <div className="topbar__actions" ref={actionsRef}>
+            <div className="dropdown-anchor">
+              <button
+                className={`icon-btn${openPanel === 'notif' ? ' is-open' : ''}`}
+                type="button"
+                aria-label="Notifikasi"
+                aria-expanded={openPanel === 'notif'}
+                onClick={() => togglePanel('notif')}
+              >
+                <IconBell />
+                {unreadCount > 0 && <span className="icon-btn__dot" />}
+              </button>
+              {openPanel === 'notif' && (
+                <NotificationPanel
+                  notifications={notifications}
+                  onMarkAllRead={markAllRead}
+                  onItemClick={markOneRead}
+                />
+              )}
+            </div>
+            <div className="dropdown-anchor">
+              <button
+                className={`icon-btn${openPanel === 'cart' ? ' is-open' : ''}`}
+                type="button"
+                aria-label="Keranjang"
+                aria-expanded={openPanel === 'cart'}
+                onClick={() => togglePanel('cart')}
+              >
+                <IconCart />
+                {cartCount > 0 && <span className="icon-btn__count">{cartCount}</span>}
+              </button>
+              {openPanel === 'cart' && (
+                <CartPanel
+                  items={cartItems}
+                  onIncrease={increaseQty}
+                  onDecrease={decreaseQty}
+                  onRemove={removeItem}
+                />
+              )}
+            </div>
           </div>
         </header>
 
