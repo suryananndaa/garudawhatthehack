@@ -379,6 +379,70 @@ app.get('/api/products', authMiddleware, async (req, res) => {
   }
 })
 
+// ── GET /api/products/:id ─────────────────────────────────────────────────────
+app.get('/api/products/:id', authMiddleware, async (req, res) => {
+  try {
+    const product = await prisma.product.findUnique({ where: { id: req.params.id } })
+    if (!product || product.supplierId !== req.user.id) {
+      return res.status(404).json({ message: 'Produk tidak ditemukan' })
+    }
+    return res.json({ product })
+  } catch (err) {
+    console.error('[products/get]', err)
+    return res.status(500).json({ message: 'Terjadi kesalahan server' })
+  }
+})
+
+// ── PUT /api/products/:id ─────────────────────────────────────────────────────
+app.put('/api/products/:id', authMiddleware, async (req, res) => {
+  const {
+    name, storageMethod, harvestDate, hygienic,
+    pricePerKg, quantityKg, iconUrl,
+  } = req.body
+
+  if (!name || !storageMethod || !harvestDate || pricePerKg == null || quantityKg == null) {
+    return res.status(400).json({ message: 'name, storageMethod, harvestDate, pricePerKg, quantityKg wajib diisi' })
+  }
+
+  try {
+    const existing = await prisma.product.findUnique({ where: { id: req.params.id } })
+    if (!existing || existing.supplierId !== req.user.id) {
+      return res.status(404).json({ message: 'Produk tidak ditemukan' })
+    }
+
+    // Prediksi ulang tier kesegaran berdasarkan data terbaru
+    const ml = await predictTier(name, storageMethod, harvestDate, hygienic ?? true)
+
+    const product = await prisma.product.update({
+      where: { id: req.params.id },
+      data: {
+        name,
+        iconUrl:           iconUrl ?? existing.iconUrl,
+        quantityKg:        parseFloat(quantityKg),
+        pricePerKg:        parseFloat(pricePerKg),
+        harvestDate:       new Date(harvestDate),
+        storageMethod,
+        hygienic:          Boolean(hygienic ?? true),
+        predictedTier:     ml.tier,
+        tierProbabilities: ml.confidence ?? undefined,
+      },
+    })
+
+    return res.json({
+      message:  'Produk berhasil diperbarui',
+      product,
+      prediction: {
+        tier:       ml.tier,
+        confidence: ml.confidence,
+        warning:    ml.warning ?? null,
+      },
+    })
+  } catch (err) {
+    console.error('[products/update]', err)
+    return res.status(500).json({ message: 'Terjadi kesalahan server' })
+  }
+})
+
 
 
 // ── GET /api/dashboard/stats ──────────────────────────────────────────────────
@@ -822,23 +886,35 @@ const PRESET_WEIGHTS: Record<string, { price: number; distance: number; freshnes
 app.post('/api/recommend', async (req, res) => {
   const { product, quantityKg, city, preset = 'seimbang' } = req.body
 
-  if (!product || !quantityKg || !city) {
-    return res.status(400).json({ message: 'product, quantityKg, dan city wajib diisi' })
+  if (!product) {
+    return res.status(400).json({ message: 'product wajib diisi' })
   }
 
+  // quantityKg & city opsional — dipakai juga sebagai search sederhana dari sisi UMKM
+  const qtyNeeded = quantityKg != null && quantityKg !== '' ? parseFloat(quantityKg) : 1
   const weights = PRESET_WEIGHTS[preset] ?? PRESET_WEIGHTS.seimbang
 
   try {
-    // 1. Geocode kota UMKM
-    const umkmCoords = await geocodeCity(city)
+    // 1. Geocode kota UMKM (kalau ada)
+    const umkmCoords = city ? await geocodeCity(city) : null
 
-    // 2. Ambil semua produk matching
+    // 2. Ambil semua produk matching (by nama produk OR nama toko)
     const products = await prisma.product.findMany({
-      where: { name: { contains: product }, quantityKg: { gt: 0 } },
+      where: {
+        AND: [
+          {
+            OR: [
+              { name: { contains: product } },
+              { supplier: { shopName: { contains: product } } }
+            ]
+          },
+          { quantityKg: { gt: 0 } }
+        ]
+      },
       include: {
         supplier: {
           select: {
-            id: true, name: true, email: true, phone: true,
+            id: true, name: true, shopName: true, email: true, phone: true,
             city: true, latitude: true, longitude: true, rating: true,
           },
         },
@@ -873,7 +949,7 @@ app.post('/api/recommend', async (req, res) => {
         productId:     p.id,
         productName:   p.name,
         supplierId:    p.supplier.id,
-        supplierName:  p.supplier.name,
+        supplierName:  p.supplier.shopName ?? p.supplier.name, // prioritas shopName, fallback ke name
         phone:         p.supplier.phone,
         city:          p.supplier.city,
         distanceKm:    Math.round(p.distanceKm * 10) / 10,
@@ -886,7 +962,7 @@ app.post('/api/recommend', async (req, res) => {
     }).sort((a, b) => b.score - a.score)
 
     // 4. Kombinasi multi-petani
-    let remaining = parseFloat(quantityKg)
+    let remaining = qtyNeeded
     const combination: { supplierId: string; supplierName: string; productName: string; allocatedKg: number; pricePerKg: number; score: number }[] = []
     for (const s of scored) {
       if (remaining <= 0) break
@@ -901,14 +977,324 @@ app.post('/api/recommend', async (req, res) => {
 
     return res.json({
       preset, weights,
-      umkmCity: city, umkmCoords: umkmCoords ?? null,
-      totalNeeded: parseFloat(quantityKg),
+      umkmCity: city ?? null, umkmCoords: umkmCoords ?? null,
+      totalNeeded: qtyNeeded,
       fulfilled: remaining <= 0,
       suppliers: scored,
       combination,
     })
   } catch (err) {
     console.error('[recommend]', err)
+    return res.status(500).json({ message: 'Terjadi kesalahan server' })
+  }
+})
+
+// ── GET /api/browse/:category ─────────────────────────────────────────────────
+app.get('/api/browse/:category', async (req, res) => {
+  const { category } = req.params
+  const { sort = 'popular', city } = req.query
+
+  try {
+    const products = await prisma.product.findMany({
+      where: { quantityKg: { gt: 0 } },
+      include: {
+        supplier: {
+          select: {
+            id: true, shopName: true, name: true, city: true,
+            latitude: true, longitude: true, rating: true, categories: true,
+          },
+        },
+      },
+    })
+
+    // Filter by kategori
+    const filtered = products.filter(p => {
+      if (!p.supplier.categories) return false
+      const cats = Array.isArray(p.supplier.categories) ? p.supplier.categories : []
+      return cats.some((c: string) => c.toLowerCase().includes(category.toLowerCase()))
+    })
+
+    if (filtered.length === 0) {
+      return res.json({ products: [], category, message: `Belum ada produk ${category}` })
+    }
+
+    // Hitung jarak jika ada city
+    let withDistance = filtered
+    if (city) {
+      const umkmCoords = await geocodeCity(String(city))
+      withDistance = filtered.map(p => {
+        let distanceKm = 9999
+        if (umkmCoords && p.supplier.latitude && p.supplier.longitude) {
+          distanceKm = haversineKm(umkmCoords.lat, umkmCoords.lon, p.supplier.latitude, p.supplier.longitude)
+        }
+        return { ...p, distanceKm }
+      })
+    } else {
+      withDistance = filtered.map(p => ({ ...p, distanceKm: null }))
+    }
+
+    // Sorting
+    let sorted = withDistance
+    if (sort === 'cheapest') {
+      sorted = withDistance.sort((a, b) => a.pricePerKg - b.pricePerKg)
+    } else if (sort === 'newest') {
+      sorted = withDistance.sort((a, b) => new Date(b.harvestDate).getTime() - new Date(a.harvestDate).getTime())
+    } else if (sort === 'freshest') {
+      const tierOrder = { Fresh: 3, Standard: 2, Rescue: 1 }
+      sorted = withDistance.sort((a, b) => {
+        const aScore = tierOrder[a.predictedTier ?? 'Standard'] ?? 0
+        const bScore = tierOrder[b.predictedTier ?? 'Standard'] ?? 0
+        return bScore - aScore
+      })
+    } else {
+      sorted = withDistance.sort((a, b) => {
+        const aScore = a.supplier.rating * a.quantityKg
+        const bScore = b.supplier.rating * b.quantityKg
+        return bScore - aScore
+      })
+    }
+
+    const result = sorted.map(p => ({
+      productId: p.id,
+      productName: p.name,
+      supplierId: p.supplier.id,
+      supplierName: p.supplier.shopName ?? p.supplier.name,
+      city: p.supplier.city,
+      distanceKm: p.distanceKm ? Math.round(p.distanceKm * 10) / 10 : null,
+      pricePerKg: p.pricePerKg,
+      quantityKg: p.quantityKg,
+      predictedTier: p.predictedTier ?? 'Standard',
+      rating: p.supplier.rating,
+      harvestDate: p.harvestDate,
+    }))
+
+    return res.json({ products: result, category, sort, total: result.length })
+  } catch (err) {
+    console.error('[browse]', err)
+    return res.status(500).json({ message: 'Terjadi kesalahan server' })
+  }
+})
+
+// ── GET /api/supplier/:id ─────────────────────────────────────────────────────
+// Profile toko petani (untuk pembeli)
+app.get('/api/supplier/:id', async (req, res) => {
+  const { id } = req.params
+
+  try {
+    const supplier = await prisma.supplier.findUnique({
+      where: { id },
+      select: {
+        id: true, name: true, shopName: true, email: true, phone: true,
+        altContact: true, address: true, city: true, latitude: true, longitude: true,
+        deliveryRadiusKm: true, description: true, categories: true,
+        shippingMethods: true, legalInfo: true, sellingSince: true,
+        operatingHours: true, productionCapacity: true, paymentMethods: true,
+        logoUrl: true, fieldPhotoUrl: true, galleryPhotos: true, rating: true,
+        createdAt: true,
+      },
+    })
+
+    if (!supplier) {
+      return res.status(404).json({ message: 'Toko tidak ditemukan' })
+    }
+
+    // Ambil semua produk dari supplier ini
+    const products = await prisma.product.findMany({
+      where: { supplierId: id, quantityKg: { gt: 0 } },
+      orderBy: { createdAt: 'desc' },
+    })
+
+    // Hitung total produk terjual (dari OrderItem)
+    const soldCount = await prisma.orderItem.count({
+      where: { product: { supplierId: id } },
+    })
+
+    return res.json({
+      supplier: {
+        ...supplier,
+        shopName: supplier.shopName ?? supplier.name,
+      },
+      products,
+      stats: {
+        totalProducts: products.length,
+        totalSold: soldCount,
+      },
+    })
+  } catch (err) {
+    console.error('[supplier profile]', err)
+    return res.status(500).json({ message: 'Terjadi kesalahan server' })
+  }
+})
+
+// ── GET /api/product/:id ──────────────────────────────────────────────────────
+// Detail produk lengkap
+app.get('/api/product/:id', async (req, res) => {
+  const { id } = req.params
+
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        supplier: {
+          select: {
+            id: true, name: true, shopName: true, city: true, address: true,
+            phone: true, rating: true, logoUrl: true, fieldPhotoUrl: true,
+            description: true, deliveryRadiusKm: true, shippingMethods: true,
+            latitude: true, longitude: true,
+          },
+        },
+      },
+    })
+
+    if (!product) {
+      return res.status(404).json({ message: 'Produk tidak ditemukan' })
+    }
+
+    return res.json({
+      product: {
+        ...product,
+        supplier: {
+          ...product.supplier,
+          shopName: product.supplier.shopName ?? product.supplier.name,
+        },
+      },
+    })
+  } catch (err) {
+    console.error('[product detail]', err)
+    return res.status(500).json({ message: 'Terjadi kesalahan server' })
+  }
+})
+
+// ── GET /api/dashboard/popular ────────────────────────────────────────────────
+// Produk populer berdasarkan jumlah terjual
+app.get('/api/dashboard/popular', async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(String(req.query.limit ?? '5'), 10) || 5, 20)
+
+    // Ambil produk dengan rating tertinggi dan stok > 0
+    const products = await prisma.product.findMany({
+      where: { quantityKg: { gt: 0 } },
+      include: {
+        supplier: {
+          select: { id: true, shopName: true, name: true, city: true },
+        },
+      },
+      orderBy: [
+        { rating: 'desc' },
+        { quantityKg: 'desc' },
+      ],
+      take: limit,
+    })
+
+    return res.json({
+      products: products.map(p => ({
+        id: p.id,
+        name: p.name,
+        pricePerKg: p.pricePerKg,
+        quantityKg: p.quantityKg,
+        rating: p.rating,
+        predictedTier: p.predictedTier,
+        supplierId: p.supplier.id,
+        supplierName: p.supplier.shopName ?? p.supplier.name,
+        city: p.supplier.city,
+      })),
+    })
+  } catch (err) {
+    console.error('[popular products]', err)
+    return res.status(500).json({ message: 'Terjadi kesalahan server' })
+  }
+})
+
+// ── GET /api/dashboard/rescue-deals ────────────────────────────────────────────
+// Produk Rescue tier (mau expire) dengan diskon besar
+app.get('/api/dashboard/rescue-deals', async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(String(req.query.limit ?? '6'), 10) || 6, 20)
+
+    // Ambil produk Rescue tier dengan stok > 0
+    const products = await prisma.product.findMany({
+      where: { 
+        predictedTier: 'Rescue',
+        quantityKg: { gt: 0 }
+      },
+      include: {
+        supplier: {
+          select: { id: true, shopName: true, name: true, city: true },
+        },
+      },
+      orderBy: [
+        { harvestDate: 'asc' }, // Paling lama panen = paling urgent
+        { quantityKg: 'desc' },
+      ],
+      take: limit,
+    })
+
+    return res.json({
+      products: products.map(p => ({
+        id: p.id,
+        name: p.name,
+        pricePerKg: p.pricePerKg,
+        originalPrice: Math.round(p.pricePerKg * 1.43), // Harga asli sebelum diskon 30%
+        discount: 30, // Persentase diskon
+        quantityKg: p.quantityKg,
+        rating: p.rating,
+        predictedTier: p.predictedTier,
+        harvestDate: p.harvestDate,
+        supplierId: p.supplier.id,
+        supplierName: p.supplier.shopName ?? p.supplier.name,
+        city: p.supplier.city,
+      })),
+    })
+  } catch (err) {
+    console.error('[rescue deals]', err)
+    return res.status(500).json({ message: 'Terjadi kesalahan server' })
+  }
+})
+
+// ── GET /api/dashboard/suppliers ───────────────────────────────────────────────
+// Produsen terpercaya berdasarkan rating
+app.get('/api/dashboard/suppliers', async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(String(req.query.limit ?? '3'), 10) || 3, 20)
+    const city = String(req.query.city ?? '').trim()
+
+    const whereClause: any = { rating: { gte: 4.0 } }
+    if (city) {
+      // MySQL tidak support mode: 'insensitive', hapus parameter mode
+      whereClause.city = { contains: city }
+    }
+
+    const suppliers = await prisma.supplier.findMany({
+      where: whereClause,
+      select: {
+        id: true,
+        name: true,
+        shopName: true,
+        city: true,
+        address: true,
+        rating: true,
+        logoUrl: true,
+        _count: {
+          select: { products: true },
+        },
+      },
+      orderBy: { rating: 'desc' },
+      take: limit,
+    })
+
+    return res.json({
+      suppliers: suppliers.map(s => ({
+        id: s.id,
+        name: s.shopName ?? s.name,
+        city: s.city,
+        address: s.address,
+        rating: s.rating,
+        logoUrl: s.logoUrl,
+        productCount: s._count.products,
+      })),
+    })
+  } catch (err) {
+    console.error('[trusted suppliers]', err)
     return res.status(500).json({ message: 'Terjadi kesalahan server' })
   }
 })

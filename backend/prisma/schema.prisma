@@ -85,6 +85,8 @@ model Product {
   // hasil prediksi model ML tier kesegaran (dari fitur yang udah dibikin sebelumnya)
   predictedTier      FreshnessTier?
   tierProbabilities  Json?      // { "Fresh": 0.9, "Standard": 0.08, "Rescue": 0.02 }
+  
+  rating         Float         @default(4.5) // rating produk individual
 
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
