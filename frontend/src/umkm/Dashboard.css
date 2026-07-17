@@ -891,8 +891,8 @@ svg{display:block;flex-shrink:0;}
   .profile-card,.tracking-card{flex:1;min-width:320px;}
 }
 @media (max-width:880px){
-  .app{grid-template-columns:1fr;}
-  .sidebar{
+  .umkm-app{grid-template-columns:1fr;}
+  .umkm-sidebar{
     position:relative;height:auto;
     flex-direction:row;flex-wrap:wrap;align-items:center;
   }

@@ -245,10 +245,10 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="app">
+    <div className="search-app">
       <Sidebar onLogout={handleLogout} />
 
-      <div className="main">
+      <div className="search-main">
         {/* TOPBAR */}
         <header className="topbar">
           <div className="search-wrap">

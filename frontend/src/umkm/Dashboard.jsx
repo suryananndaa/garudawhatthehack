@@ -677,7 +677,7 @@ export default function UMKMDashboard() {
                   ) : (
                     <div className="producer-row">
                       {trustedSuppliers.map((s) => (
-                        <button key={s.id} className="producer-card" type="button" onClick={() => navigate(`/pembeli/toko/${s.id}`)}>
+<div key={s.id} className="producer-card" onClick={() => navigate(`/pembeli/toko/${s.id}`)}>
                           <div className="producer-card__img"></div>
                           <div className="producer-card__body">
                             <p className="producer-card__name">{s.name}</p>
@@ -685,7 +685,7 @@ export default function UMKMDashboard() {
                             <p className="producer-card__rating"><StarIcon /> {s.rating.toFixed(1)} ({s.productCount}+ produk)</p>
                             <button className="producer-card__btn" type="button">Lihat Produk</button>
                           </div>
-                        </button>
+                        </div>
                       ))}
                     </div>
                   )}

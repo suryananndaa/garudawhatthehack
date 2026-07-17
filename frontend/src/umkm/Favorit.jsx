@@ -218,10 +218,10 @@ export default function FavoritPage() {
   const FILTER_CATS = ['Semua','Sayuran','Buah','Cabai']
 
   return (
-    <div className="app">
+    <div className="favorit-app">
       <Sidebar onLogout={handleLogout} />
 
-      <div className="main">
+      <div className="favorit-main">
         {/* TOPBAR */}
         <header className="topbar">
           <div className="search-wrap">
@@ -305,7 +305,7 @@ export default function FavoritPage() {
                 <div className="es-illo">🤍</div>
                 <h3>Belum ada favorit</h3>
                 <p>Tekan ikon hati di produk untuk menyimpan favorit.</p>
-                <button className="es-btn" onClick={() => handleNavigateSearch()}>
+                <button className="es-btn" onClick={() => navigate('/pembeli/jelajahi/sayur')}>
                   Jelajahi Produk
                 </button>
               </div>
