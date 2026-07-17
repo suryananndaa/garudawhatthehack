@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, NavLink } from 'react-router-dom'
+import { toggleFav, loadFavIds } from './data/products.js'
 import './JelajahiPage.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
@@ -12,7 +13,7 @@ function StarIcon() {
   )
 }
 
-function ProductBrowseCard({ product, onClickProduct, onClickSupplier }) {
+function ProductBrowseCard({ product, onClickProduct, onClickSupplier, isFavorited, onToggleFav }) {
   const tierColors = {
     Fresh: { bg: '#e4f1e7', text: '#2d5940', label: 'Segar' },
     Standard: { bg: '#fbf1dd', text: '#c49a3c', label: 'Standard' },
@@ -61,9 +62,14 @@ function ProductBrowseCard({ product, onClickProduct, onClickSupplier }) {
       {/* Actions Bar */}
       <div className="feed-card__actions">
         <div className="feed-card__actions-left">
-          <button className="feed-card__action-btn">
-            <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+          <button
+            className={`feed-card__action-btn${isFavorited ? ' feed-card__action-btn--active' : ''}`}
+            type="button"
+            aria-label={isFavorited ? 'Hapus dari favorit' : 'Tambah ke favorit'}
+            onClick={onToggleFav}
+          >
+            <svg viewBox="0 0 24 24" fill={isFavorited ? '#e11d48' : 'none'} width="24" height="24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke={isFavorited ? '#e11d48' : 'currentColor'} strokeWidth="2" strokeLinejoin="round"/>
             </svg>
           </button>
           <button className="feed-card__action-btn">
@@ -120,6 +126,7 @@ export default function JelajahiPage() {
   const [sort, setSort] = useState('popular')
   const [city, setCity] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
+  const [favIds, setFavIds] = useState(() => loadFavIds())
 
   const categoryIcon = category === 'buah' ? '🍇' : category === 'sayur' ? '🥕' : '⋯'
   const categoryLabel = category === 'buah' ? 'Buah' : category === 'sayur' ? 'Sayuran' : 'Produk'
@@ -318,6 +325,11 @@ export default function JelajahiPage() {
                     product={p}
                     onClickProduct={() => navigate(`/pembeli/produk/${p.productId}`)}
                     onClickSupplier={() => navigate(`/pembeli/toko/${p.supplierId}`)}
+                    isFavorited={favIds.includes(p.productId)}
+                    onToggleFav={(e) => {
+                      e.stopPropagation()
+                      setFavIds(toggleFav(p.productId))
+                    }}
                   />
                 ))}
               </div>

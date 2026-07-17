@@ -3,6 +3,28 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { PRODUCTS, loadFavIds, saveFavIds, toggleFav, rupiah } from './data/products.js'
 import './Favorit.css'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+
+// Ubah produk asli dari backend ke bentuk yang dipakai ProdCard (yang aslinya dibuat buat katalog contoh)
+function toProdCardShape(product) {
+  return {
+    id: product.id,
+    name: product.name,
+    farmer: product.supplier?.shopName ?? product.supplier?.name ?? 'Petani',
+    loc: product.supplier?.city ?? 'Lokasi tidak diketahui',
+    dist: null,
+    price: product.pricePerKg,
+    rating: product.supplier?.rating ?? 5,
+    reviews: 0,
+    badge: null,
+    cat: null, // kategori asli belum tersimpan di data produk backend
+    tags: product.predictedTier ? [product.predictedTier] : [],
+    emoji: '📦',
+    tint: 'green',
+    isReal: true,
+  }
+}
+
 /* ============================================================
    HELPERS
    ============================================================ */
@@ -28,7 +50,7 @@ function spawnLeaves(x, y) {
 /* ============================================================
    PRODUCT CARD
    ============================================================ */
-function ProdCard({ product, onToggleFav, onNavigateSearch }) {
+function ProdCard({ product, onToggleFav, onNavigateSearch, onViewReal }) {
   const p = product
   return (
     <article className="prod-card">
@@ -40,7 +62,7 @@ function ProdCard({ product, onToggleFav, onNavigateSearch }) {
           onClick={e => onToggleFav(p.id, e)}
           aria-label="Hapus dari favorit"
         >❤️</button>
-        <span className="dist-pill">📍 {p.dist} km</span>
+        {p.dist != null && <span className="dist-pill">📍 {p.dist} km</span>}
       </div>
       <div className={`card-body card-tint-${p.tint}`}>
         <p className="card-name">{p.name}</p>
@@ -48,17 +70,20 @@ function ProdCard({ product, onToggleFav, onNavigateSearch }) {
         <div className="rating-row">
           <span className="stars">{starStr(p.rating)}</span>
           <b>{p.rating}</b>
-          <span>({p.reviews}+)</span>
+          {p.reviews > 0 && <span>({p.reviews}+)</span>}
         </div>
         <div className="price-row">
           <span className="price-main">{rupiah_(p.price)}</span>
           <span className="price-unit">/kg</span>
         </div>
         <div className="tag-row">
-          {p.tags.slice(0, 3).map(t => <span key={t} className="tag">{t}</span>)}
+          {(p.tags ?? []).slice(0, 3).map(t => <span key={t} className="tag">{t}</span>)}
         </div>
         <div className="card-foot">
-          <button className="detail-btn" onClick={() => onNavigateSearch(p.name)}>
+          <button
+            className="detail-btn"
+            onClick={() => p.isReal ? onViewReal(p.id) : onNavigateSearch(p.name)}
+          >
             Lihat Detail
           </button>
         </div>
@@ -183,13 +208,33 @@ export default function FavoritPage() {
   const [filterCat, setFilterCat] = useState('Semua')
   const [sort, setSort] = useState('newest')
   const [toast, setToast] = useState(null)
+  const [realFavProducts, setRealFavProducts] = useState([])
 
-  // Reload favIds when page gains focus (sinkron dengan Search)
+  // Reload favIds when page gains focus (sinkron dengan Search & Jelajahi)
   useEffect(() => {
     const sync = () => setFavIds(loadFavIds())
     window.addEventListener('focus', sync)
     return () => window.removeEventListener('focus', sync)
   }, [])
+
+  // Favorit yang id-nya bukan dari katalog contoh → produk asli dari backend, perlu di-fetch
+  useEffect(() => {
+    const realIds = favIds.filter(id => !PRODUCTS.some(p => p.id === id))
+    if (realIds.length === 0) { setRealFavProducts([]); return }
+
+    let cancelled = false
+    Promise.all(
+      realIds.map(id =>
+        fetch(`${API_URL}/api/product/${id}`)
+          .then(r => r.ok ? r.json() : null)
+          .then(d => d?.product ? toProdCardShape(d.product) : null)
+          .catch(() => null)
+      )
+    ).then(results => {
+      if (!cancelled) setRealFavProducts(results.filter(Boolean))
+    })
+    return () => { cancelled = true }
+  }, [favIds])
 
   let toastTimer
   const showToast = msg => {
@@ -204,9 +249,9 @@ export default function FavoritPage() {
     spawnLeaves(rect.left + rect.width / 2, rect.top + rect.height / 2)
     const next = toggleFav(id)
     setFavIds(next)
-    const p = PRODUCTS.find(x => x.id === id)
-    showToast(`${p?.name} dihapus dari favorit`)
-  }, [])
+    const p = PRODUCTS.find(x => x.id === id) ?? realFavProducts.find(x => x.id === id)
+    showToast(`${p?.name ?? 'Produk'} dihapus dari favorit`)
+  }, [realFavProducts])
 
   const handleDeleteAll = () => {
     if (!window.confirm('Hapus semua dari favorit?')) return
@@ -225,8 +270,11 @@ export default function FavoritPage() {
     navigate(`/pembeli/search?q=${encodeURIComponent(q)}`)
   }
 
-  // Filter + sort
-  let favProds = PRODUCTS.filter(p => favIds.includes(p.id))
+  // Filter + sort — gabungkan produk katalog contoh dengan produk asli dari backend
+  let favProds = [
+    ...PRODUCTS.filter(p => favIds.includes(p.id)),
+    ...realFavProducts.filter(p => favIds.includes(p.id)),
+  ]
   const total = favProds.length
   const statSayur = favProds.filter(p => ['Sayuran','Cabai','Bawang'].includes(p.cat)).length
   const statBuah  = favProds.filter(p => p.cat === 'Buah').length
@@ -237,7 +285,7 @@ export default function FavoritPage() {
     case 'price-desc':  favProds.sort((a,b) => b.price - a.price); break
     case 'name-az':     favProds.sort((a,b) => a.name.localeCompare(b.name)); break
     case 'rating-desc': favProds.sort((a,b) => b.rating - a.rating); break
-    default:            favProds.sort((a,b) => b.id - a.id); break
+    default:            favProds.sort((a,b) => String(b.id).localeCompare(String(a.id))); break
   }
 
   const FILTER_CATS = ['Semua','Sayuran','Buah','Cabai']
@@ -348,6 +396,7 @@ export default function FavoritPage() {
                     product={p}
                     onToggleFav={handleToggleFav}
                     onNavigateSearch={handleNavigateSearch}
+                    onViewReal={(id) => navigate(`/pembeli/produk/${id}`)}
                   />
                 ))}
                 {filterCat === 'Semua' && (
