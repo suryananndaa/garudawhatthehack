@@ -311,8 +311,7 @@ export default function Pengaturan() {
       {/* ===== SIDEBAR ===== */}
       <aside className="umkm-sidebar">
         <div className="brand">
-          <span className="brand__mark">🌿</span>
-          <span className="brand__name">Tani<span className="brand__accent">ku</span></span>
+          <img src="/logo-taniku.PNG" alt="Taniku" className="brand__logo" />
         </div>
 
         <nav className="nav" aria-label="Navigasi utama">
@@ -355,7 +354,7 @@ export default function Pengaturan() {
         </header>
 
         <div className="page-head">
-          <h1>Pengaturan</h1>
+          <h1 style={{ fontFamily: 'Lemonella', fontSize: '40px', letterSpacing: '2px'}}>Pengaturan</h1>
           <p>Kelola profil, akun, dan preferensi Anda</p>
         </div>
 

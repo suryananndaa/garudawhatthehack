@@ -38,10 +38,8 @@ input,select,textarea{font-family:inherit;}
 
 /* ============ SIDEBAR (shared) ============ */
 .umkm-sidebar{background:linear-gradient(180deg,var(--forest-950),var(--forest-900) 60%);color:#eef4ef;padding:26px 18px 22px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
-.brand{display:flex;align-items:center;gap:8px;padding:4px 10px 28px;}
-.brand__mark{font-size:20px;}
-.brand__name{font-family:var(--font-display);font-weight:600;font-size:22px;color:#f4f2ea;}
-.brand__accent{color:var(--amber);}
+.brand{display:flex;align-items:center;justify-content:center;padding:4px 10px 28px;}
+.brand__logo{height:56px;width:auto;object-fit:contain;}
 
 .nav{display:flex;flex-direction:column;gap:4px;}
 .nav__item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;color:#cfd9d1;font-size:14.5px;font-weight:600;background:none;border:none;text-align:left;width:100%;transition:background .18s ease, color .18s ease, transform .18s ease;}

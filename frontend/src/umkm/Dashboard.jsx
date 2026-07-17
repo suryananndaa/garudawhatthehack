@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { NavLink } from 'react-router-dom'
 import './Dashboard.css'
+import { PRODUCTS, loadFavIds, toggleFav, rupiah } from './data/products.js'
 
 // ============ DATA ============
 const INITIAL_NOTIFICATIONS = [
@@ -19,43 +20,69 @@ const INITIAL_CART = [
 
 function formatRupiah(n) { return 'Rp ' + n.toLocaleString('id-ID') }
 
-const products = [
-  { name: "Tomat Keriting", meta: "Segar · Bandung", price: "Rp 12.000/kg", rating: "4.8", count: "120+" },
-  { name: "Tomat Keriting", meta: "Segar · Bandung", price: "Rp 12.000/kg", rating: "4.8", count: "120+" },
-  { name: "Tomat Keriting", meta: "Segar · Bandung", price: "Rp 12.000/kg", rating: "4.8", count: "120+" },
-  { name: "Tomat Keriting", meta: "Segar · Bandung", price: "Rp 12.000/kg", rating: "4.8", count: "120+" },
-  { name: "Tomat Keriting", meta: "Segar · Bandung", price: "Rp 12.000/kg", rating: "4.8", count: "120+" },
-]
-
 const producers = [
   { name: "Petani Budi",  loc: "Cileuncy, Bandung", distance: "25 KM", rating: "4.8", count: "120+" },
   { name: "Kebun Hijau",  loc: "Lembang, Bandung",  distance: "32 KM", rating: "4.6", count: "95+"  },
   { name: "Tani Maju",    loc: "Ciwidey, Bandung",  distance: "40 KM", rating: "4.7", count: "110+" },
 ]
+const badgeLabel = { best: 'Terbaik', close: 'Terdekat', price: 'Harga Terbaik' }
+const starStr = r => '★'.repeat(Math.round(r)) + '☆'.repeat(5 - Math.round(r))
 
-// ============ HELPERS ============
-function StarIcon() {
-  return (
-    <svg className="star" viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
-      <path d="M12 2.5l2.9 6.1 6.6.7-4.9 4.6 1.3 6.6L12 17l-5.9 3.5 1.3-6.6L2.5 9.3l6.6-.7Z" />
-    </svg>
-  )
+function spawnLeaves(x, y) {
+  const ls = ['🍃', '🌿', '🍂']
+  for (let i = 0; i < 5; i++) {
+    const el = document.createElement('span')
+    el.className = 'leaf-particle'
+    el.textContent = ls[Math.floor(Math.random() * ls.length)]
+    const tx = (Math.random() - .5) * 120
+    const ty = -(40 + Math.random() * 80)
+    const rot = (Math.random() - .5) * 360
+    el.style.cssText = `left:${x}px;top:${y}px;--tx:${tx}px;--ty:${ty}px;--rot:${rot}deg;animation-delay:${i * 55}ms`
+    document.body.appendChild(el)
+    setTimeout(() => el.remove(), 900 + i * 55)
+  }
 }
 
-function ProductCard({ product }) {
+function ProductCard({ product, isFav, onToggleFav, onNavigateSearch }) {
+  const p = product
   return (
-    <button className="product-card" type="button">
-      <div className="product-card__img" />
-      <div className="product-card__body">
-        <p className="product-card__name">{product.name}</p>
-        <p className="product-card__meta">{product.meta}</p>
-        <p className="product-card__price">{product.price}</p>
-        <p className="product-card__rating"><StarIcon /> {product.rating} ({product.count})</p>
+    <article className="prod-card">
+      <div className="card-img-wrap">
+        <div className={`ph tint-${p.tint}`}>{p.emoji}</div>
+        {p.badge && <span className={`c-badge ${p.badge}`}>{badgeLabel[p.badge]}</span>}
+        <button
+          className="fav-card-btn"
+          type="button"
+          onClick={e => onToggleFav(p.id, e)}
+          aria-label={isFav ? 'Hapus dari favorit' : 'Tambah ke favorit'}
+        >{isFav ? '❤️' : '🤍'}</button>
+        <span className="dist-pill">📍 {p.dist} km</span>
       </div>
-    </button>
+      <div className={`card-body card-tint-${p.tint}`}>
+        <p className="card-name">{p.name}</p>
+        <p className="card-farmer">{p.farmer} · {p.loc}</p>
+        <div className="rating-row">
+          <span className="stars">{starStr(p.rating)}</span>
+          <b>{p.rating}</b>
+          <span>({p.reviews}+)</span>
+        </div>
+        <div className="price-row">
+          <span className="price-main">{rupiah(p.price)}</span>
+          <span className="price-unit">/kg</span>
+        </div>
+        <div className="tag-row">
+          {p.tags.slice(0, 3).map(t => <span key={t} className="tag">{t}</span>)}
+        </div>
+        <div className="card-foot">
+          <button className="detail-btn" type="button" onClick={() => onNavigateSearch(p.name)}>
+            Lihat Detail
+          </button>
+        </div>
+      </div>
+    </article>
   )
 }
-
+// ============ HELPERS ============
 function IconBell(p) {
   return (
     <svg viewBox="0 0 24 24" fill="none" width="19" height="19" {...p}>
@@ -197,7 +224,10 @@ function ProducerCard({ producer }) {
       <div className="producer-card__body">
         <p className="producer-card__name">{producer.name}</p>
         <p className="producer-card__loc">{producer.loc}</p>
-        <p className="producer-card__rating"><StarIcon /> {producer.rating} ({producer.count})</p>
+        <p className="producer-card__rating">
+          <span className="stars">{starStr(parseFloat(producer.rating))}</span>
+          {' '}{producer.rating} ({producer.count})
+        </p>
         <button className="producer-card__btn" type="button">Lihat Produk</button>
       </div>
     </div>
@@ -206,6 +236,19 @@ function ProducerCard({ producer }) {
 
 // ============ MAIN DASHBOARD ============
 export default function UMKMDashboard() {
+
+  const [favIds, setFavIds] = useState(() => loadFavIds())
+
+function handleToggleFav(id, e) {
+  const rect = e.currentTarget.getBoundingClientRect()
+  spawnLeaves(rect.left + rect.width / 2, rect.top + rect.height / 2)
+  setFavIds(toggleFav(id))
+}
+
+function handleNavigateSearch(q = '') {
+  navigate(`/pembeli/search?q=${encodeURIComponent(q)}`)
+}
+
   const navigate = useNavigate()
   const rawUser = localStorage.getItem('user') || sessionStorage.getItem('user')
   const user = rawUser ? JSON.parse(rawUser) : null
@@ -271,8 +314,7 @@ export default function UMKMDashboard() {
       {/* ============ SIDEBAR ============ */}
       <aside className="umkm-sidebar">
         <div className="brand">
-          <span className="brand__mark">🌿</span>
-          <span className="brand__name">Tani<span className="brand__accent">ku</span></span>
+          <img src="/logo-taniku.PNG" alt="Taniku" className="brand__logo" />
         </div>
 
         <nav className="nav" aria-label="Navigasi utama">
@@ -395,7 +437,7 @@ export default function UMKMDashboard() {
             {/* Hero */}
             <section className="hero">
               <div className="hero__text">
-                <h2>Distribusi Cerdas,<br /><span>Untung Bersama</span> 🌿</h2>
+                <h2 style={{ fontFamily: 'Lemonella', fontSize: '38px', letterSpacing: '2px'}}>Distribusi Cerdas,<br /><span>Untung Bersama</span> 🌿</h2>
                 <p>AI kami membantu Anda menemukan produsen terbaik dengan jarak terdekat dan harga paling menguntungkan.</p>
                 <button className="hero__cta" type="button">
                   Pelajari Cara Kerja
@@ -461,7 +503,15 @@ export default function UMKMDashboard() {
                 <a href="#" className="section__link">Lihat semua</a>
               </div>
               <div className="product-row">
-                {products.map((p, i) => <ProductCard key={i} product={p} />)}
+                {PRODUCTS.slice(0, 5).map(p => (
+                  <ProductCard
+                    key={p.id}
+                    product={p}
+                    isFav={favIds.includes(p.id)}
+                    onToggleFav={handleToggleFav}
+                    onNavigateSearch={handleNavigateSearch}
+                  />
+                ))}
               </div>
             </section>
 

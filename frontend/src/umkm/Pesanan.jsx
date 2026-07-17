@@ -514,8 +514,7 @@ export default function PesananSaya() {
       {/* ===== SIDEBAR ===== */}
       <aside className="umkm-sidebar">
         <div className="brand">
-          <span className="brand__mark">🌿</span>
-          <span className="brand__name">Tani<span className="brand__accent">ku</span></span>
+          <img src="/logo-taniku.PNG" alt="Taniku" className="brand__logo" />
         </div>
 
         <nav className="nav" aria-label="Navigasi utama">
@@ -593,7 +592,7 @@ export default function PesananSaya() {
         </header>
 
         <div className="page-head">
-          <h1>Pesanan Saya</h1>
+          <h1 style={{ fontFamily: 'Lemonella', fontSize: '40px', letterSpacing: '2px'}}>Pesanan Saya</h1>
           <div className="filter-pills">
             {FILTERS.map(f => (
               <button key={f} className={`filter-pill${filter===f?' filter-pill--active':''}`} onClick={()=>setFilter(f)}>{f}</button>
