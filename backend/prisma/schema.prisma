@@ -18,15 +18,32 @@ datasource db {
 
 model Supplier {
   id          String   @id @default(uuid())
-  name        String   // "CV. Matoa Papua Sentosa"
+  name        String   // nama pemilik
   email       String   @unique
   password    String   // hashed dengan bcrypt
   role        String   @default("petani") // "petani" | "pembeli"
   phone       String?
-  address     String?
+  altContact  String?  // kontak alternatif (WhatsApp Business, dll)
+  address     String?  // alamat lengkap toko
   city        String?  // nama kota/kabupaten, contoh: "Jayapura"
-  latitude    Float?   // koordinat GPS (hasil geocoding dari city)
-  longitude   Float?   // koordinat GPS (hasil geocoding dari city)
+  latitude    Float?   // koordinat GPS
+  longitude   Float?
+  deliveryRadiusKm Float? // jangkauan pengiriman (km)
+  shopName    String?  // nama toko
+  description String?  // deskripsi toko
+  categories  Json?    // spesialisasi produk, contoh: ["buah","sayur"]
+  shippingMethods Json? // metode pengiriman, contoh: ["ekspedisi","kurirToko"]
+  legalInfo   String?  // legalitas usaha (opsional, NIB/dll)
+  sellingSince Int?    // tahun mulai jualan
+  operatingHours Json? // { jamBuka, jamTutup, hariAktif }
+  productionCapacity String? // kapasitas produksi rutin
+  paymentMethods Json? // metode pembayaran diterima
+  bankName    String?
+  bankAccount String?
+  bankAccountName String?
+  logoUrl     String?
+  fieldPhotoUrl String? // foto ladang/kebun
+  galleryPhotos Json?  // galeri foto tambahan
   rating      Float    @default(5.0) // "Performa Toko" -> 4,8 / 5
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -34,6 +51,8 @@ model Supplier {
   products      Product[]
   orders        Order[]
   notifications Notification[]
+  wishlistItems UmkmWishlistItem[]
+  searchLogs    UmkmSearchLog[]
 }
 
 // ---------- Produk ----------
@@ -132,4 +151,56 @@ model Notification {
   createdAt  DateTime @default(now())
 
   @@index([supplierId, isRead])
+}
+
+// ---------- Wishlist & riwayat pencarian UMKM ----------
+
+enum WishlistSource {
+  manual
+  from_search
+}
+
+model UmkmWishlistItem {
+  id              String         @id @default(uuid())
+  buyerId         String
+  buyer           Supplier       @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+
+  productName     String
+  quantityKg      Float?
+  maxPricePerKg   Float?
+  preferredTier   FreshnessTier?
+  acceptsRescue   Boolean        @default(false)
+
+  city            String?
+  latitude        Float?
+  longitude       Float?
+  maxDistanceKm   Float?
+
+  note            String?
+  source          WishlistSource @default(manual)
+  isActive        Boolean        @default(true)
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([buyerId, isActive])
+  @@index([productName, isActive])
+}
+
+model UmkmSearchLog {
+  id           String   @id @default(uuid())
+  buyerId      String
+  buyer        Supplier @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+
+  productName  String
+  quantityKg   Float?
+  city         String?
+  latitude     Float?
+  longitude    Float?
+  preset       String?
+
+  createdAt    DateTime @default(now())
+
+  @@index([buyerId, createdAt])
+  @@index([productName, createdAt])
 }

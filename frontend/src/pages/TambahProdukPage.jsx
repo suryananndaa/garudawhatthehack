@@ -12,6 +12,38 @@ import './TambahProdukPage.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
+function isProfilLengkap() {
+  try {
+    const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}')
+    return !!(user.phone && user.fieldPhotoUrl)
+  } catch { return true }
+}
+
+// Modal: profil belum lengkap
+function ProfilBelumLengkapModal({ onClose, onLengkapi }) {
+  return (
+    <div className="tambah-produk__modal-overlay">
+      <div className="tambah-produk__modal">
+        <div className="tambah-produk__modal-icon">⚠️</div>
+        <h3 className="tambah-produk__modal-title">Profil Belum Lengkap</h3>
+        <p className="tambah-produk__modal-desc">
+          Kamu perlu melengkapi profil toko dulu sebelum bisa menambahkan produk.
+          Minimal isi <strong>nomor HP</strong> dan <strong>foto ladang</strong> agar pembeli
+          bisa menghubungi kamu dan mempercayai keberadaan toko.
+        </p>
+        <div className="tambah-produk__modal-actions">
+          <button type="button" className="tambah-produk__modal-btn-secondary" onClick={onClose}>
+            Nanti saja
+          </button>
+          <button type="button" className="tambah-produk__modal-btn-primary" onClick={onLengkapi}>
+            Lengkapi Profil →
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const KATEGORI_OPTIONS = [
   { value: 'buah',    label: 'Buah-buahan' },
   { value: 'sayur',   label: 'Sayuran' },
@@ -48,6 +80,7 @@ const TIER_CONFIG = {
 
 export default function TambahProdukPage() {
   const navigate = useNavigate()
+  const [showModal, setShowModal] = useState(!isProfilLengkap())
   const [form, setForm] = useState(INITIAL_FORM)
   const [foto, setFoto] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -144,6 +177,12 @@ export default function TambahProdukPage() {
 
   return (
     <div className="tambah-produk">
+      {showModal && (
+        <ProfilBelumLengkapModal
+          onClose={() => navigate('/petani/dashboard')}
+          onLengkapi={() => navigate('/petani/pengaturan')}
+        />
+      )}
       <PageIntro title="Tambah Produk" subtitle="Tambahkan produk baru hasil panen anda." />
 
       <div className="tambah-produk__body">
