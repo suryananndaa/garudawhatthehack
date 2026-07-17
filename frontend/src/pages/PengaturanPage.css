@@ -70,3 +70,36 @@
     grid-template-columns: 1fr;
   }
 }
+
+.location-picker__coords {
+  display: none;
+}
+
+.pengaturan__img-preview {
+  width: 100%;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.pengaturan__gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.pengaturan__gallery-item {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.pengaturan__gallery-input {
+  font-size: 13px;
+  margin-bottom: 8px;
+}

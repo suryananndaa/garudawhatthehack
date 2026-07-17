@@ -11,6 +11,7 @@ import PesananPage from './pages/PesananPage.jsx'
 import PengirimanPage from './pages/PengirimanPage.jsx'
 import PengirimanDetailPage from './pages/PengirimanDetailPage.jsx'
 import PengaturanPage from './pages/PengaturanPage.jsx'
+import LengkapiProfilPage from './pages/LengkapiProfilPage.jsx'
 import UMKMDashboard from './umkm/Dashboard.jsx'
 import PesananSaya from './umkm/Pesanan.jsx'
 import Pengaturan from './umkm/Pengaturan.jsx'
@@ -24,16 +25,6 @@ function isLoggedIn() {
 
 function PrivateRoute({ children }) {
   return isLoggedIn() ? children : <Navigate to="/login" replace />
-}
-
-function ComingSoon({ title }) {
-  return (
-    <div style={{ padding: '40px', textAlign: 'center', color: '#888' }}>
-      <div style={{ fontSize: '48px', marginBottom: '16px' }}>🚧</div>
-      <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#333', marginBottom: '8px' }}>{title}</h2>
-      <p style={{ fontSize: '14px' }}>Halaman ini sedang dalam pengembangan.</p>
-    </div>
-  )
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -54,7 +45,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="pengiriman" element={<PengirimanPage />} />
           <Route path="pengiriman/:id" element={<PengirimanDetailPage />} />
           <Route path="pengaturan" element={<PengaturanPage />} />
-          <Route path="keuangan" element={<ComingSoon title="Keuangan" />} />
+          <Route path="lengkapi-profil" element={<LengkapiProfilPage />} />
         </Route>
 
         {/* ===== PEMBELI / UMKM ===== */}

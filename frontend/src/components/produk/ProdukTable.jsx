@@ -2,6 +2,29 @@ import { MoreHorizontal } from 'lucide-react'
 import StatusBadge from './StatusBadge.jsx'
 import './ProdukTable.css'
 
+const TIER_CONFIG = {
+  Fresh:    { label: 'Fresh',    bg: '#f0fdf4', color: '#166534' },
+  Standard: { label: 'Standard', bg: '#fefce8', color: '#854d0e' },
+  Rescue:   { label: 'Rescue',   bg: '#fff5f5', color: '#991b1b' },
+}
+
+function TierBadge({ tier }) {
+  if (!tier) return <span style={{ color: '#ccc', fontSize: 12 }}>—</span>
+  const t = TIER_CONFIG[tier] ?? TIER_CONFIG.Standard
+  return (
+    <span style={{
+      background: t.bg,
+      color: t.color,
+      padding: '3px 10px',
+      borderRadius: 20,
+      fontSize: 11,
+      fontWeight: 600,
+    }}>
+      {t.label}
+    </span>
+  )
+}
+
 export default function ProdukTable({ products, onEdit, onMore }) {
   if (products.length === 0) {
     return (
@@ -22,6 +45,7 @@ export default function ProdukTable({ products, onEdit, onMore }) {
               <th>Stok Tersedia</th>
               <th>Harga / kg</th>
               <th>Terjual (Bulan ini)</th>
+              <th>Tier Kesegaran</th>
               <th>Status</th>
               <th>Aksi</th>
             </tr>
@@ -39,6 +63,7 @@ export default function ProdukTable({ products, onEdit, onMore }) {
                 <td>{product.stok}</td>
                 <td>{product.harga}</td>
                 <td>{product.terjual}</td>
+                <td><TierBadge tier={product.predictedTier} /></td>
                 <td>
                   <StatusBadge status={product.status} />
                 </td>

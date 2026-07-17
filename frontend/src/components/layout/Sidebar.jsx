@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { Home, BookOpen, Package, Truck, CreditCard, Settings, Sprout } from 'lucide-react'
+import { Home, BookOpen, Package, Truck, Settings, Sprout } from 'lucide-react'
 import './Sidebar.css'
 
 // Item dengan `to` akan berpindah halaman sungguhan lewat react-router.
@@ -9,7 +9,6 @@ const NAV_ITEMS = [
   { key: 'produk',     label: 'Produk Saya', icon: BookOpen,   to: '/petani/produk-saya' },
   { key: 'pesanan',    label: 'Pesanan',     icon: Package,    to: '/petani/pesanan' },
   { key: 'pengiriman', label: 'Pengiriman',  icon: Truck,      to: '/petani/pengiriman' },
-  { key: 'keuangan',   label: 'Keuangan',    icon: CreditCard },
   { key: 'pengaturan', label: 'Pengaturan',  icon: Settings,   to: '/petani/pengaturan' },
 ]
 

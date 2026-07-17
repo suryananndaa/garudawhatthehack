@@ -14,3 +14,19 @@
   flex-direction: column;
   gap: 20px;
 }
+
+.produk-saya__loading {
+  padding: 48px;
+  text-align: center;
+  color: #aaa;
+  font-size: 13px;
+}
+
+.produk-saya__error {
+  padding: 24px;
+  text-align: center;
+  color: #991b1b;
+  background: #fff5f5;
+  font-size: 13px;
+  border-top: 1px solid #fecaca;
+}
