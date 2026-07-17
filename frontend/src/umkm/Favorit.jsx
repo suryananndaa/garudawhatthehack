@@ -115,33 +115,58 @@ const NAV_ITEMS = [
 
 function Sidebar({ onLogout }) {
   return (
-    <aside className="umkm-sidebar">
-      <div className="sidebar-inner">
-        <div className="logo-row">
-          <img src="/logo-taniku.PNG" alt="Taniku" className="logo-mark" style={{ width: 32, height: 32, objectFit: 'contain' }} />
-          <div className="logo-word">Tan<em>iku</em></div>
+      <aside className="umkm-sidebar">
+        <div className="brand">
+          <img src="/logo-taniku.PNG" alt="Taniku" className="brand__logo" />
         </div>
-        <nav className="nav">
-          {NAV_ITEMS.map(({ to, label, icon }) => (
-            <NavLink key={to} to={to} end
-              className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
-            >
-              {icon}<span>{label}</span>
-            </NavLink>
-          ))}
+
+        <nav className="nav" aria-label="Navigasi utama">
+          <NavLink to="/pembeli/dashboard" end className={({ isActive }) => `nav__item${isActive ? ' nav__item--active' : ''}`}>
+            <svg className="nav__icon" viewBox="0 0 24 24" fill="none">
+              <path d="M4 11.5 12 4l8 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M6 10v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M10 20v-5h4v5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span>Beranda</span>
+          </NavLink>
+          <NavLink to="/pembeli/pesanan" className={({ isActive }) => `nav__item${isActive ? ' nav__item--active' : ''}`}>
+            <svg className="nav__icon" viewBox="0 0 24 24" fill="none">
+              <path d="M7 3h8l3 3v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
+              <path d="M9 9h6M9 13h6M9 17h3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+            <span>Pesanan Saya</span>
+          </NavLink>
+          <NavLink to="/pembeli/favorit" className={({ isActive }) => `nav__item${isActive ? ' nav__item--active' : ''}`}>
+            <svg className="nav__icon" viewBox="0 0 24 24" fill="none">
+              <path d="M12 20.5s-7.5-4.6-9.6-9A5.2 5.2 0 0 1 12 6.4 5.2 5.2 0 0 1 21.6 11.5c-2.1 4.4-9.6 9-9.6 9Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
+            </svg>
+            <span>Favorit</span>
+          </NavLink>
+          <NavLink to="/pembeli/pengaturan" className={({ isActive }) => `nav__item${isActive ? ' nav__item--active' : ''}`}>
+            <svg className="nav__icon" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="3.2" stroke="currentColor" strokeWidth="1.8"/>
+              <path d="M12 2.6v2.2M12 19.2v2.2M4.5 4.5l1.5 1.5M18 18l1.5 1.5M2.6 12h2.2M19.2 12h2.2M4.5 19.5 6 18M18 6l1.5-1.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+            <span>Pengaturan</span>
+          </NavLink>
         </nav>
-        <div className="sb-spacer" />
-        <div className="promo-card">
-          <h4>Beli Lokal, Dukung Petani Indonesia</h4>
-          <p>Setiap pembelianmu membantu petani lokal berkembang.</p>
-          <button className="promo-btn" type="button">Pelajari Lebih →</button>
+
+        <div className="sidebar__bottom">
+          <div className="promo-card">
+            <p className="promo-card__title">Bergabung jadi<br />Konsumen Premium</p>
+            <p className="promo-card__sub">Dapatkan harga spesial dan rekomendasi terdekat setiap hari.</p>
+            <button className="promo-card__btn" type="button">Upgrade Sekarang</button>
+          </div>
+          <button className="help-pill" type="button" onClick={onLogout}>
+            <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <polyline points="16 17 21 12 16 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+            <span>Keluar<br /><small>dari akun Taniku</small></span>
+          </button>
         </div>
-        <button className="help-row" type="button" onClick={onLogout}>
-          <div className="help-ic">🚪</div>
-          <div><p>Keluar</p><small>dari akun Taniku</small></div>
-        </button>
-      </div>
-    </aside>
+      </aside>
   )
 }
 
@@ -260,7 +285,7 @@ export default function FavoritPage() {
           <div className="fav-header">
             <div className="fav-title-wrap">
               <p className="eyebrow">Koleksi saya</p>
-              <h1>Favorit <span className="fav-leaf">🍃</span></h1>
+              <h1 style={{ fontFamily: 'Lemonella' }}>Favorit <span className="fav-leaf">🍃</span></h1>
               <p className="fav-desc">Produk pilihan yang kamu simpan dari petani terbaik.</p>
             </div>
             <div className="stats-row">

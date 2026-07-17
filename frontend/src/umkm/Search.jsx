@@ -60,8 +60,7 @@ function Sidebar({ onLogout }) {
     <aside className="umkm-sidebar">
       <div className="sidebar-inner">
         <div className="logo-row">
-          <img src="/logo-taniku.PNG" alt="Taniku" className="logo-mark" style={{ width: 32, height: 32, objectFit: 'contain' }} />
-          <div className="logo-word">Tan<em>iku</em></div>
+          <img src="/logo-taniku.PNG" alt="Taniku" className="logo-mark" />
         </div>
         <nav className="nav">
           {NAV_ITEMS.map(({ to, label, icon }) => (

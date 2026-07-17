@@ -25,43 +25,7 @@ const INITIAL_CART = [
 
 function formatRupiah(n) { return 'Rp ' + n.toLocaleString('id-ID') }
 
-const products = [
-  { name: "Tomat Keriting", meta: "Segar · Bandung", price: "Rp 12.000/kg", rating: "4.8", count: "120+" },
-  { name: "Tomat Keriting", meta: "Segar · Bandung", price: "Rp 12.000/kg", rating: "4.8", count: "120+" },
-  { name: "Tomat Keriting", meta: "Segar · Bandung", price: "Rp 12.000/kg", rating: "4.8", count: "120+" },
-  { name: "Tomat Keriting", meta: "Segar · Bandung", price: "Rp 12.000/kg", rating: "4.8", count: "120+" },
-  { name: "Tomat Keriting", meta: "Segar · Bandung", price: "Rp 12.000/kg", rating: "4.8", count: "120+" },
-]
-
-const producers = [
-  { name: "Petani Budi",  loc: "Cileuncy, Bandung", distance: "25 KM", rating: "4.8", count: "120+" },
-  { name: "Kebun Hijau",  loc: "Lembang, Bandung",  distance: "32 KM", rating: "4.6", count: "95+"  },
-  { name: "Tani Maju",    loc: "Ciwidey, Bandung",  distance: "40 KM", rating: "4.7", count: "110+" },
-]
-
 // ============ HELPERS ============
-function StarIcon() {
-  return (
-    <svg className="star" viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
-      <path d="M12 2.5l2.9 6.1 6.6.7-4.9 4.6 1.3 6.6L12 17l-5.9 3.5 1.3-6.6L2.5 9.3l6.6-.7Z" />
-    </svg>
-  )
-}
-
-function ProductCard({ product }) {
-  return (
-    <button className="product-card" type="button">
-      <div className="product-card__img" />
-      <div className="product-card__body">
-        <p className="product-card__name">{product.name}</p>
-        <p className="product-card__meta">{product.meta}</p>
-        <p className="product-card__price">{product.price}</p>
-        <p className="product-card__rating"><StarIcon /> {product.rating} ({product.count})</p>
-      </div>
-    </button>
-  )
-}
-
 function IconBell(p) {
   return (
     <svg viewBox="0 0 24 24" fill="none" width="19" height="19" {...p}>
@@ -190,22 +154,6 @@ function CartPanel({ items, onIncrease, onDecrease, onRemove }) {
           <button className="dropdown-panel__checkout" type="button">Checkout</button>
         </div>
       )}
-    </div>
-  )
-}
-
-function ProducerCard({ producer }) {
-  return (
-    <div className="producer-card">
-      <div className="producer-card__img">
-        <span className="producer-card__dist">{producer.distance}</span>
-      </div>
-      <div className="producer-card__body">
-        <p className="producer-card__name">{producer.name}</p>
-        <p className="producer-card__loc">{producer.loc}</p>
-        <p className="producer-card__rating"><StarIcon /> {producer.rating} ({producer.count})</p>
-        <button className="producer-card__btn" type="button">Lihat Produk</button>
-      </div>
     </div>
   )
 }
@@ -380,8 +328,7 @@ export default function UMKMDashboard() {
       {/* ============ SIDEBAR ============ */}
       <aside className="umkm-sidebar">
         <div className="brand">
-          <span className="brand__mark">🌿</span>
-          <span className="brand__name">Tani<span className="brand__accent">ku</span></span>
+          <img src="/logo-taniku.PNG" alt="Taniku" className="brand__logo" />
         </div>
 
         <nav className="nav" aria-label="Navigasi utama">
@@ -510,7 +457,7 @@ export default function UMKMDashboard() {
             {/* Hero */}
             <section className="hero">
               <div className="hero__text">
-                <h2>Distribusi Cerdas,<br /><span>Untung Bersama</span> 🌿</h2>
+                <h2 style={{ fontFamily: 'Lemonella', fontSize: '38px', letterSpacing: '2px'}}>Distribusi Cerdas,<br /><span>Untung Bersama</span> 🌿</h2>
                 <p>AI kami membantu Anda menemukan produsen terbaik dengan jarak terdekat dan harga paling menguntungkan.</p>
                 <button className="hero__cta" type="button">
                   Pelajari Cara Kerja

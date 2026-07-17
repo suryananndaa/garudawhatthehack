@@ -1,3 +1,17 @@
+@font-face {
+  font-family: 'Lemonella';
+  src: url('/src/font/Lemonella.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'LemonDays';
+  src: url('/src/font/Lemon_Days.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
 :root {
   --color-forest-900: #12271d;
   --color-forest-800: #1a3628;
@@ -53,4 +67,12 @@ button {
 :focus-visible {
   outline: 2px solid var(--color-forest-500);
   outline-offset: 2px;
+}
+
+/* FIX SCROLL */
+html, body, #root {
+  height: auto !important;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto !important;
 }
